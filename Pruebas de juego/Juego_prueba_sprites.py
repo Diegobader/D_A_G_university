@@ -12,7 +12,7 @@ Resolution = 32
 face_l=0
 face_r=1
 v=1
-stk_sprites='Imagenes/stk_fig.png'
+stk_sprites='Imagenes/stk_and_soap_mace.png'
 def game():
     pygame.init()
     screen = display.set_mode(DISPLAY, FLAGS, Resolution)
@@ -105,7 +105,7 @@ def game():
     entities.add(stk)
 
     while 1:
-        timer.tick(10)
+        timer.tick(3)
         for e in pygame.event.get():
             if e.type == QUIT:
                 pygame.quit()
@@ -170,12 +170,14 @@ class Stk(Entity):
                              3: (141, 5, 24, 41),
                              4: (107, 5, 31, 41),
                              5: (79, 5, 27, 0 ) }
-        self.right_states = { 0: (4, 44, 28, 50),
-                              1: (38, 44, 28, 50),
-                              2: (65, 44, 28, 50),
-                              3: (131, 44, 28, 50),
-                              4: (169, 44, 28, 50),
-                              5: (197, 44, 28, 50)}
+        self.right_states = { 0: (5, 52, 31, 55),
+                             1: (46, 52, 31, 55),
+                             2: (83, 52, 31, 55),
+                             3: (119, 52, 31, 55),
+                             4: (162, 52, 31, 55),
+                             5: (211, 52, 31, 55 ),
+                             6: (248, 52, 31, 55),
+                             7: (282, 52, 31, 55)}
         self.up_states = { 0: (284, 81, 29, 43),
                            1: (312, 81, 29, 43),
                            2: (225, 81, 29, 43) }
