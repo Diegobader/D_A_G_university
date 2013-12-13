@@ -1,7 +1,7 @@
 import pygame
 pygame.init()  
 class GameMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se deben agregar a la lista jiji
-    def __init__(self, screen, items,resolution, bg_color=(0,0,0), font=None, font_size=90,font_color_off=(255,255,255),font_color_on=(255,0,0)):
+    def __init__(self, screen, items,resolution, font_size, bg_color=(0,0,0), font=None,font_color_off=(255,255,255),font_color_on=(255,0,0)):
         self.resolution=resolution
         self.screen = screen
         self.scr_width = self.screen.get_rect().width
@@ -45,6 +45,6 @@ class GameMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se d
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     return choosi  #Retorna el valor de la opcion elegida
             for man in range(len(self.items)):       #Genera la lista y colorea la opcion que esta siendo seleccionada
-                self.items[man][1]=self.font.render(str(self.items[man][0]), 1, (255,255,255))
-            self.items[choosi-1][1]=self.font.render(str(self.items[choosi-1][0]), 1, (0,229,38)) 
+                self.items[man][1]=self.font.render(str(self.items[man][0]), 1, (20,200,100))
+            self.items[choosi-1][1]=self.font.render(str(self.items[choosi-1][0]), 1, (255,0,0)) 
             pygame.display.flip()   
