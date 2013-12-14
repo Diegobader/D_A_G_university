@@ -1,5 +1,4 @@
-import pygame
-import pygame, sys
+import pygame, sys, random, math
 from pygame.locals import *
 width=640
 height=420
@@ -69,6 +68,7 @@ class PJ(Entity):
         self.sheet.set_clip(pygame.Rect(6, 52, 30, 50))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         self.rect = self.image.get_rect()
+        self.vivo=True
         self.rect.topleft = position
         self.xvel=0
         self.yvel=0
@@ -200,7 +200,117 @@ class PJ(Entity):
             attack=True
 
         self.update(up,right,left,attack,platforms)
+    def muerte(self, proyectil, enemigo):
+        if (pygame.sprite.collide_rect(self, enemigo) and self.vivo and not self.attacking) or ((pygame.sprite.collide_rect(self, proyectil) and self.vivo and not proyectil.wait)): 
+            self.vivo = False
+            self.image = pygame.image.load('vacio.png')
+            
+def velocidad(pj, burbuja):
+    x1 = pj.rect.centerx - burbuja.rect.centerx
+    y1 = pj.rect.centery - burbuja.rect.centery
+    norm = math.sqrt(x1**2 + y1**2)
+    x2 = x1/norm
+    y2 = y1/norm
+    return x2, y2
 
+def texto(texto, posx, posy, color=(255, 255, 255)):
+    fuente = pygame.font.Font("times.ttf", 25)
+    salida = pygame.font.Font.render(fuente, texto, 1, color)
+    salida_rect = salida.get_rect()
+    salida_rect.centerx = posx
+    salida_rect.centery = posy
+    return salida, salida_rect
+class Burbuja(pygame.sprite.Sprite):
+    def __init__(self, posx, posy):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('burbuja1.png')
+        self.rect = self.image.get_rect()
+        self.rect.centerx = posx
+        self.rect.centery = posy
+        self.vivo = True
+        self.speed = 0.1
+        
+    def update(self, pj, time, proyectil):
+        if self.vivo:
+            if self.rect.top <= 0:
+                self.rect.top = 0
+                self.speed *= -1 
+            if self.rect.bottom >= height:
+                self.rect.bottom = height
+                self.speed *= -1 
+            self.rect.centery += self.speed*time
+            
+            r = random.randint(0,1)
+            if r == 1 and proyectil.wait:
+                proyectil.wait = False 
+             
+            if pygame.sprite.collide_rect(pj, self) and pj.attacking:
+                self.muerte()
+                
+    def muerte(self):
+        self.vivo = False
+        self.image = pygame.image.load('vacio.png')
+     
+class Proyectil(pygame.sprite.Sprite):
+    def __init__(self,burbuja):
+        pygame.sprite.Sprite.__init__(self)
+        self.wait = True
+        self.image = pygame.image.load('vacio.png')
+        self.rect = self.image.get_rect()
+        self.rect.centerx = burbuja.rect.centerx
+        self.rect.centery = burbuja.rect.centery
+        self.speed = 0.1
+        
+    def update(self, pj, time, burbuja, vx, vy):
+        if self.wait:
+            self.rect.centery = burbuja.rect.centery
+        if not self.wait:
+            self.image = pygame.image.load('proyectil.png')
+            self.rect.centerx += vx*self.speed*time
+            self.rect.centery += vy*self.speed*time
+            if self.rect.top <= 0 or self.rect.bottom >= height or self.rect.left <= 0 or self.rect.right >= width:
+                self.desaparicion(burbuja)
+            if not burbuja.vivo:
+                self.desaparicion(burbuja)
+            
+    
+    def desaparicion(self, burbuja):
+        self.wait = True
+        self.image = pygame.image.load("vacio.png")
+        self.rect.centery = burbuja.rect.centery
+        self.rect.centerx = burbuja.rect.centerx
+              
+class Slime(pygame.sprite.Sprite):
+    def __init__(self, posx, posy):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('slime.png')
+        self.rect = self.image.get_rect()
+        self.rect.centerx = posx
+        self.rect.centery = posy
+        self.speed = 0.01
+        self.vivo = True
+        self.right = False
+        self.left = False
+    
+    def update(self, pj, time):
+        if self.vivo:
+            if pj.rect.centerx - self.rect.centerx > 0:
+                self.right = True
+                self.left = False
+            if pj.rect.centerx - self.rect.centerx < 0:
+                self.left = True
+                self.right = False
+            if self.left:
+                self.rect.centerx -= self.speed*time
+            if self.right:
+                self.rect.centerx += self.speed*time
+            if pygame.sprite.collide_rect(pj, self) and pj.attacking:
+                self.muerte()
+            
+    
+    def muerte(self):
+            self.vivo = False
+            self.image = pygame.image.load('vacio.png')
 def main():
 
     fondo='fondo1.png' 
@@ -261,13 +371,21 @@ def main():
     total_level_width  = len(level[0])*35
     total_level_height = len(level)*35
     camera = Camera(complex_camera, total_level_width, total_level_height)
+    posx, posx_rect = texto(str(player.rect.centerx), width/2, height/2,[0,0,0])
+    slime = Slime(width/2, height-30)
+    burbuja = Burbuja(width*2/3, height/2)
+    proyectil = Proyectil(burbuja)
+    vx = vy = 0
     entities.add(player)
+    entities.add(slime)
+    entities.add(burbuja)
 
 
-    while True:
+    while player.vivo:
         
         time=clock.tick(60)
         key=pygame.key.get_pressed()
+        posx, posx_rect = texto(str(player.rect.centerx), width/2, height/2,[0,0,0])
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
                 sys.exit()
@@ -286,22 +404,44 @@ def main():
         if fondo3.rect.right<=0:
             fondo3.rect.left=width*2
 
-        player.handle_event(key,platforms)
+        if player.vivo:    
+            player.handle_event(key,platforms)
+        if slime.vivo:
+            slime.update(player, time)
+            player.muerte(proyectil, slime)
+        if burbuja.vivo:  
+            if proyectil.wait:
+                vx, vy = velocidad(player, burbuja)
+            burbuja.update(player, time, proyectil)
+            proyectil.update(player, time, burbuja, vx, vy)
+            player.muerte(proyectil, burbuja)
+        player.attacking = False
+
+        
         camera.update(player)
         background=pygame.image.load(fondo).convert()
         screen.blit(background,(0,0))
         screen.blit(fondo1.image,(fondo1.rect.left,fondo1.rect.top))
         screen.blit(fondo2.image,(fondo2.rect.left,fondo2.rect.top))
         screen.blit(fondo3.image,(fondo3.rect.left,fondo3.rect.top))
+        screen.blit(proyectil.image, proyectil.rect)
+        screen.blit(posx, posx_rect)
         for e in entities:
             screen.blit(e.image, camera.apply(e))
      
         pygame.display.flip()
         clock.tick(15)
+    else:
+        gg, gg_rect = texto("GAMEOVER", width/2, height/2, [0,0,0])
+        screen.fill([200,200,200])
+        screen.blit(gg, gg_rect)
+        while True:
+            pygame.display.flip()
     return 0
 
 if __name__ == '__main__':
     pygame.init()
     main()
     pass
+
 
