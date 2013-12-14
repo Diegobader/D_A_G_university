@@ -150,13 +150,14 @@ class PJ(Entity):
             self.xvel=0
         if self.onGround and self.xvel==0 and not attack:
             self.clip(self.right_states[1])
-        self.rect.x+=self.xvel
-        self.rect.y+=self.yvel
+        self.rect.left+=self.xvel
+        self.collide(self.xvel, 0 , platforms)
+        self.rect.top+=self.yvel
         self.onGround=False
         if self.rect.y>=self.alt-10:
             self.onGround=True
             self.rect.y=self.alt-10
-        self.collide(self.xvel, 0 , platforms)
+        
         self.collide(0, self.yvel , platforms)
 
  
@@ -170,7 +171,11 @@ class PJ(Entity):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
                 if isinstance(p, Platform):
-                    self.clip(self.right_states[0])
+                    self.clip(self.right_states[1])
+                if xvel > 0:
+                    self.rect.right = p.rect.left
+                if xvel < 0:
+                        self.rect.left = p.rect.right
                 if yvel > 0:
                     self.rect.bottom = p.rect.top
                     self.onGround = True
@@ -283,9 +288,9 @@ def main():
         camera.update(player)
         background=pygame.image.load(fondo).convert()
         screen.blit(background,(0,0))
-        #screen.blit(fondo1.image,(fondo1.rect.left,fondo1.rect.top))
-        #screen.blit(fondo2.image,(fondo2.rect.left,fondo2.rect.top))
-        #screen.blit(fondo3.image,(fondo3.rect.left,fondo3.rect.top))
+        screen.blit(fondo1.image,(fondo1.rect.left,fondo1.rect.top))
+        screen.blit(fondo2.image,(fondo2.rect.left,fondo2.rect.top))
+        screen.blit(fondo3.image,(fondo3.rect.left,fondo3.rect.top))
         screen.blit(player.image, player.rect)
         for e in entities:
             screen.blit(e.image, camera.apply(e))
