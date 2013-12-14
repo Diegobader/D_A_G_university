@@ -218,8 +218,8 @@ class PJ(pygame.sprite.Sprite):
         self.update(up,right,left,attack)
         
 class Fondo(pygame.sprite.Sprite):
-    def __init__(self,imagen,left,top):
-        self.image = pygame.image.load(imagen)
+    def __init__(self,imagen,left,top,resolution):
+        self.image = pygame.transform.scale(pygame.image.load(imagen).convert(), resolution)
         self.rect = self.image.get_rect()
         self.rect.left = left
         self.rect.top = top
@@ -253,9 +253,9 @@ def main(resolution,sprites):
     screen = pygame.display.set_mode(resolution)
     clock = pygame.time.Clock()
     player = PJ((0, resolution[1]-60), sprites)
-    fondo1=Fondo("Images/Others/fondo1.png",0,0)
-    fondo2=Fondo("Images/Others/fondo2.png",resolution[0],0)
-    fondo3=Fondo("Images/Others/fondo3.png",resolution[0]*2,0)
+    fondo1=Fondo("Images/Others/fondo1.png",0,0,resolution)
+    fondo2=Fondo("Images/Others/fondo2.png",resolution[0],0,resolution)
+    fondo3=Fondo("Images/Others/fondo3.png",resolution[0]*2,0,resolution)
     posx, posx_rect = texto(str(player.rect.centerx), resolution[0]/2, resolution[1]/2,[0,0,0])
     slime = Slime(resolution[0]/2, resolution[1]-30)
     burbuja = Burbuja(resolution[0]*2/3, resolution[1]/2,resolution)
