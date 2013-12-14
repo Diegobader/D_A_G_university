@@ -1,7 +1,7 @@
 import pygame, sys, random, math
 from pygame.locals import *
-width=640
-height=420
+width=600
+height=200
 WIN_WIDTH = width
 WIN_HEIGHT = height
 HALF_WIDTH = int(WIN_WIDTH / 2)
@@ -52,15 +52,22 @@ def complex_camera(camera, target_rect):
     t = min(0, t)                           # stop scrolling at the top
     return Rect(l, t, w, h)
 
-class Platform(Entity):
+class Valdosa(Entity):
     def __init__(self, x, y):
         Entity.__init__(self)
-        self.image = pygame.image.load("dirt.png")
+        self.image = pygame.image.load("v.png")
         self.image.convert()
         self.rect = Rect(x, y, 18, 18)
     def update(self):
         pass
-
+class Water(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.image = pygame.image.load("w.png")
+        self.image.convert()
+        self.rect = Rect(x, y, 18, 18)
+    def update(self):
+        pass
 class PJ(Entity):
     def __init__(self, position):
         Entity.__init__(self)
@@ -170,9 +177,13 @@ class PJ(Entity):
     def collide(self, xvel, yvel, platforms,attack):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
-                if isinstance(p, Platform) and not attack:
+                if isinstance(p, Valdosa) and not attack:
                     self.clip(self.right_states[0])
-                elif isinstance(p, Platform) and attack:
+                elif isinstance(p, Valdosa) and attack:
+                    self.clip(self.attackright_states[0])
+                if isinstance(p, Water) and not attack:
+                    self.clip(self.right_states[0])
+                elif isinstance(p, Water) and attack:
                     self.clip(self.attackright_states[0])
                 if xvel > 0:
                     self.rect.right = p.rect.left
@@ -322,63 +333,57 @@ def main():
     
     x=y=0
     level= [
-    "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "p                                                              p",
-    "                                                                                                              W",
-    "                              p                                                                                W",
-    "                           p     p                                                                             W",
-    "                   ppppp            p                  p                                                       W",
-    "          pppppp                                                                                                     W",
-    "                                                               ",
-    "  ",
-    "        ",  
-    "         ",   
-    "pppppppppp        ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
-    "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
-    "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
-    "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",    "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
-
-    "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
-  "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp"
-    ]
+"vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+"v                                                                                                                                             v",
+"v                                                                                                                                             v",
+"v                                                                                                                                             v",
+"v                                                                                                                                             v",
+"v                                                                                                                                             v",
+"v                                                                                                                                             v",
+"v                                                                                                                                             v",
+"v                                                                                                                                             v",
+"v                                                                                                                                             v",
+"v                                                                                                                                             v",
+"v                                                                                          vv                                                 v",
+"v  p                                              s      vvvvvv                          vv                                                   v",
+"v              vvv                             vvvvvvv                                 vv                                                     v",
+"v         vvv              s         vvv   vvv                s            s          v                v        b        v                    v",
+"vvvvvvvvvvvvvvvvvwwvvvvvvvvvvvvvvvvvvvvwwwwwvvvvvvvvvwwwvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvwwwwwwwvvvvvvvwwwvvvvvvvvvvvvvvvwwwvvvvvvvvvvvvvvvvvvvv",
+"vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"]
     platforms=[]
-    
+    slimes=[]
     entities=pygame.sprite.Group()
     for row in level:
         for col in row:
-            if col =="p":
-                p = Platform(x, y)
-                platforms.append(p)
-                entities.add(p)
+            if col =="v":
+                v = Valdosa(x, y)
+                platforms.append(v)
+                entities.add(v)
+            if col=="p":
+                player= PJ((x,y))
+                entities.add(player)
+            if col=="w":
+                w = Water(x, y)
+                platforms.append(w)
+                entities.add(w)
+            if col=="s":
+                slime=Slime(x,y)
+                slimes.append(slime)
+                entities.add(slimes)
+            if col=="b":
+                burbuja=Burbuja(x,y)
+                entities.add(burbuja)
             x += 18
         y += 18
         x = 0
-    player=PJ((0,height))
+    
     total_level_width  = len(level[0])*35
     total_level_height = len(level)*35
     camera = Camera(complex_camera, total_level_width, total_level_height)
     posx, posx_rect = texto(str(player.rect.centerx), width/2, height/2,[0,0,0])
-    slime = Slime(width/2, height-30)
-    burbuja = Burbuja(width*2/3, height/2)
     proyectil = Proyectil(burbuja)
     vx = vy = 0
-    entities.add(player)
-    entities.add(slime)
-    entities.add(burbuja)
+
 
 
     while player.vivo:
