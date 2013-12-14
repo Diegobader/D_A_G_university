@@ -1,6 +1,6 @@
 import pygame, sys
 import Menu
-import Players
+import Main
 def Map(level,stage): #Elige mapa de acuerdo a nivel
     return 'Maps/'+str(level)+'_'+str(stage)+'.txt'
 def Fondo(level,stage):
@@ -35,6 +35,6 @@ def game(vidas,resolution): #Hace correr los codigos
     pygame.init()
     character=menu(resolution)  #Para seleccionar personaje
     Character(1,1,character)   #para seleccionar vestimenta de personaje
-    Players.main(resolution,Character(1,1,character),Fondo(1,1))             
-game(3,(1200,784))
+    Main.main(resolution,Character(1,1,character))            
+game(3,(600,500))
 
