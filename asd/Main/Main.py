@@ -12,7 +12,7 @@ class Burbuja(pygame.sprite.Sprite):
         self.rect.centerx = posx
         self.rect.centery = posy
         self.vivo = True
-        self.speed = 0.3
+        self.speed = 0.1
         
     def update(self, pj, time, proyectil):
         if self.vivo:
@@ -43,7 +43,7 @@ class Proyectil(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = burbuja.rect.centerx
         self.rect.centery = burbuja.rect.centery
-        self.speed = 1
+        self.speed = 0.1
         
     def update(self, pj, time, burbuja, vx, vy):
         if self.wait:
@@ -71,7 +71,7 @@ class Slime(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = posx
         self.rect.centery = posy
-        self.speed = 0.1
+        self.speed = 0.01
         self.vivo = True
         self.right = False
         self.left = False
