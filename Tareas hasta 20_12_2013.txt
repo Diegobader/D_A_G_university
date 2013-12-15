@@ -1,0 +1,18 @@
+Gabriel:
+
+Creacion y animacion de ENemigos para los niveles venideros
+-ataques
+-daño
+-muerte de los mismos
+
+Amanda:
+
+Animacion de Jugador
+-muerte
+-movimiento
+-colisiones
+
+Diego:
+Union de codigos, Cambios de nivel y Eventos en juego
+-Crear elementos que permitan fluidez de juego
+-Crear mapas e imagenes
