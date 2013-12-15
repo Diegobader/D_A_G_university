@@ -1,0 +1,25 @@
+Tareas Cumplidas:
+1.Creacion de Fondos
+2.Creacion de Sprites Basicos
+3.Movimiento de personaje
+4.Movimiento de Enemigos lvl1
+5.Movimiento de Fondo
+6.Creacion de Menu
+7.Seleccion de elementos a travez de menu
+8.Colisiones
+9.Muerte de Jugador
+10.Muerte de enemigos
+11.Generacion de un mapa basico
+12.Colisiones con el mapa
+13.Texto en pantalla
+
+
+Falta:
+1.Cambio de Nivel
+2.Asignacion de Puntaje
+3.Nuevos Sprites
+4.Nuevos mapas
+5.Nuevos enemigo
+6.Hilo conductor para historia (Ya definido pero falta agregarlo)
+7.Mejora en movimientos y colisiones
+8.Union y ordenamiento de Codigos (en proceso)
