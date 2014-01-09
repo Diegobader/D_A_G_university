@@ -1,102 +1,205 @@
 import pygame, sys, random, math
 from pygame.locals import *
 
+
+#############################################################################
+
+def rezize(image,resolution):
+    return  pygame.transform.scale(pygame.image.load(image).convert(), resolution)
+
+###############################################################################
+
+class Entity(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+
+############################################################################
+
+class Platform(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.image = pygame.image.load("Images/Others/v.png")
+        self.image.convert()
+        self.rect = Rect(x, y, 18, 18)
+    def update(self):
+        pass
+    
+#################################################################################################
+      
+class Fondo(pygame.sprite.Sprite):
+    def __init__(self,imagen,left,top,resolution):
+        self.image = rezize(imagen, resolution)
+        self.rect = self.image.get_rect()
+        self.rect.left = left
+        self.rect.top = top
+    
+    def mov(self,PJ,keys,time,fondo2,resolution):
+
+        if PJ.rect.x >= resolution[0]/2 and keys[K_RIGHT]:
+            self.rect.left -= 0.5 * time
+        if self.rect.left < 0 and keys[K_RIGHT] and PJ.rect.right == resolution[0]/2:
+            fondo2.rect.left = self.rect.right
+
+#############################################################################
+
+class Camera(object):
+    def __init__(self, camera_func, resolution):
+        self.camera_func = camera_func
+        self.state = Rect(0, 0, resolution[0], resolution[1])
+
+    def apply(self, target):
+        return target.rect.move(self.state.topleft)
+
+    def update(self, target,resolution):
+        self.state = self.camera_func(self.state, target.rect,resolution)
+
+def simple_camera(camera, target_rect,resolution):
+    l, t, _, _ = target_rect
+    _, _, w, h = camera
+    return Rect(-l+resolution[0]/2, -t+resolution[1]/2, w, h)
+
+def complex_camera(camera, target_rect,resolution):
+    l, t, _, _ = target_rect
+    _, _, w, h = camera
+    l, t, _, _ = -l+(resolution[0]/2), -t+resolution[1]/2, w, h
+
+    l = min(0, l)                           # stop scrolling at the left edge
+    l = max(-(camera.width-resolution[0]), l)   # stop scrolling at the right edge
+    t = max(-(camera.height-resolution[1]), t) # stop scrolling at the bottom
+    t = min(0, t)                           # stop scrolling at the top
+    return Rect(l, t, w, h)
+
+##################################################################################
+
 class Burbuja(pygame.sprite.Sprite):
     def __init__(self, posx, posy, resolution):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('Images/Others/bb_1.png')
-        self.rect = self.image.get_rect()
+        self.rect =  Rect(posx, posy, 70, 66)
         self.rect.centerx = posx
         self.rect.centery = posy
         self.vivo = True
-        self.speed = 0.3
+        self.speed = 3
+        self.proyectil = Proyectil(self)
         
-    def update(self, pj, time, proyectil,resolution):
+    def update(self, pj, time, platforms,oils,resolution):
+        """Movimiento de Personaje y colisiones"""
         if self.vivo:
-            if self.rect.top <= 0:
-                self.rect.top = 0
-                self.speed *= -1 
-            if self.rect.bottom >= resolution[1]:
-                self.rect.bottom = resolution[1]
-                self.speed *= -1 
-            self.rect.centery += self.speed*time
-            
+            #if self.rect.top <= 0:
+            #    self.rect.top = 0
+            #    self.speed *= -1 
+            #if self.rect.bottom >= resolution[1]:
+            #    self.rect.bottom = resolution[1]
+            #    self.speed *= -1 
             r = random.randint(0,1)
-            if r == 1 and proyectil.wait:
-                proyectil.wait = False 
-             
+            if r == 1 and self.proyectil.wait:
+                self.proyectil.wait = False 
+            vx, vy = self.velocidad(pj) 
+
+            for p in platforms:
+                if pygame.sprite.collide_rect(self, p):
+                    self.speed *= -1
+                    self.rect.centery += self.speed
+
+            for o in oils:
+                if pygame.sprite.collide_circle(self, o):
+                    self.speed *= -1
+                    self.rect.centery += self.speed
+                    
+            self.proyectil.update(pj, time, self, vx, vy, platforms, oils,resolution) 
+
+            self.rect.centery += self.speed
+            
             if pygame.sprite.collide_rect(pj, self) and pj.attacking:
                 self.muerte()
-                
+    
+    def velocidad(self, pj):
+        x1 = pj.rect.centerx - self.rect.centerx
+        y1 = pj.rect.centery - self.rect.centery
+        norm = math.sqrt(x1**2 + y1**2)
+        x2 = x1/norm
+        y2 = y1/norm
+        return x2, y2
+    
     def muerte(self):
         self.vivo = False
         self.image = pygame.image.load('Images/Others/vacio.png')
+
+#########################################################################
      
 class Proyectil(pygame.sprite.Sprite):
     def __init__(self,burbuja):
         pygame.sprite.Sprite.__init__(self)
         self.wait = True
         self.image = pygame.image.load('Images/Others/vacio.png')
-        self.rect = self.image.get_rect()
+        self.rect = Rect(burbuja.rect.centerx, burbuja.rect.centery, 30, 28)
         self.rect.centerx = burbuja.rect.centerx
         self.rect.centery = burbuja.rect.centery
-        self.speed = 1
+        self.speed = 10
         
-    def update(self, pj, time, burbuja, vx, vy,resolution):
+    def update(self, pj, time, burbuja, vx, vy,platforms,oils,resolution):
         if self.wait:
             self.rect.centery = burbuja.rect.centery
+            self.rect.centerx = burbuja.rect.centerx
         if not self.wait:
             self.image = pygame.image.load('Images/Others/bb_p.png')
-            self.rect.centerx += vx*self.speed*time
-            self.rect.centery += vy*self.speed*time
-            if self.rect.top <= 0 or self.rect.bottom >= resolution[1] or self.rect.left <= 0 or self.rect.right >= resolution[0]:
+            self.rect.centerx += vx*self.speed
+            self.rect.centery += vy*self.speed
+            for p in platforms:
+                if pygame.sprite.collide_rect(self, p):
+                    self.desaparicion(burbuja)
+            for o in oils:
+                if pygame.sprite.collide_rect(self, o):
+                    self.desaparicion(burbuja)
+            if not burbuja.vivo or self.rect.left <= 0 or self.rect.top <= 0 or self.rect.bottom >= resolution[1]:
                 self.desaparicion(burbuja)
-            if not burbuja.vivo:
-                self.desaparicion(burbuja)
-            
     
     def desaparicion(self, burbuja):
         self.wait = True
         self.image = pygame.image.load("Images/Others/vacio.png")
-        self.rect.centery = burbuja.rect.centery
-        self.rect.centerx = burbuja.rect.centerx
+
+###################################################################################
               
 class Slime(pygame.sprite.Sprite):
     def __init__(self, posx, posy):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('Images/Others/slime.png')
-        self.rect = self.image.get_rect()
+        self.rect = Rect(posx, posy, 39, 34)
         self.rect.centerx = posx
         self.rect.centery = posy
         self.speed = 0.1
         self.vivo = True
         self.right = False
-        self.left = False
+        self.left = True
     
-    def update(self, pj, time):
+    def update(self, pj, time,platforms,oils):
         if self.vivo:
-            if pj.rect.centerx - self.rect.centerx > 0:
-                self.right = True
-                self.left = False
-            if pj.rect.centerx - self.rect.centerx < 0:
-                self.left = True
-                self.right = False
-            if self.left:
-                self.rect.centerx -= self.speed*time
-            if self.right:
-                self.rect.centerx += self.speed*time
+            #if pj.rect.centerx - self.rect.centerx > 0:
+            #    self.right = True
+            #    self.left = False
+            #if pj.rect.centerx - self.rect.centerx < 0:
+            #    self.left = True
+            #    self.right = False
+            for p in platforms:
+                if pygame.sprite.collide_rect(self,p):
+                    self.speed *= -1
+                    self.rect.centerx += self.speed
+            for o in oils:
+                if pygame.sprite.collide_rect(self, o):
+                    self.speed *= -1
+                    self.rect.centerx += self.speed
+            self.rect.centerx += self.speed
             if pygame.sprite.collide_rect(pj, self) and pj.attacking:
                 self.muerte()
-            
-    
     def muerte(self):
             self.vivo = False
             self.image = pygame.image.load('Images/Others/vacio.png')
         
-##################################################
+####################################################################################
       
-class PJ(pygame.sprite.Sprite):
+class PJ(Entity,pygame.sprite.Sprite):
     def __init__(self, position,sprites):
+        Entity.__init__(self)
         self.sheet = pygame.image.load(sprites)
         self.sheet.set_clip(pygame.Rect(6, 52, 30, 50))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
@@ -104,12 +207,10 @@ class PJ(pygame.sprite.Sprite):
         self.rect.topleft = position
         self.xvel=0
         self.yvel=0
-        self.vivo = True
         self.onGround=False
         self.attacking = False
         self.frame = 0
         self.alt=position[1]
-        self.x = 0
 
         self.right_states={ 0: (6, 52, 30, 50),
                            1: (49, 52, 30, 50),
@@ -147,7 +248,7 @@ class PJ(pygame.sprite.Sprite):
         return clipped_rect
 
 
-    def update(self, up,right, left,attack):
+    def update(self, up,right, left,attack,platforms):
         if attack:
             self.clip(self.attackright_states)
             self.attacking = True
@@ -161,7 +262,7 @@ class PJ(pygame.sprite.Sprite):
         if right and self.onGround:
             if not attack:
                 self.clip(self.right_states)
-                self.xvel= 5
+            self.xvel= 5
             if attack:
                 self.clip(self.attackright_states)
         if left and self.onGround:
@@ -185,24 +286,58 @@ class PJ(pygame.sprite.Sprite):
         if not (right or left):
             self.xvel=0
         if self.onGround and self.xvel==0 and not attack:
-            self.clip(self.right_states[1])
+            self.clip(self.right_states[0])
         self.rect.x+=self.xvel
+        self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
         self.onGround=False
         if self.rect.y>=self.alt-10:
             self.onGround=True
             self.rect.y=self.alt-10
-
+        self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
+    def reset(self,x,y):
+        self.x = x
+        self.y = y
 
-    def muerte(self, proyectil, enemigo):
-        if (pygame.sprite.collide_rect(self, enemigo) and self.vivo and not self.attacking) or ((pygame.sprite.collide_rect(self, proyectil) and self.vivo and not proyectil.wait)): 
+        self.rect.center = (self.x, self.y,attack)
+        
+    def muerte_proyectil(self, enemigo):
+        if pygame.sprite.collide_rect(self, enemigo.proyectil): 
             self.vivo = False
-            self.image = pygame.image.load('Images/Others/vacio.png')
+            self.image = pygame.image.load("Images/Others/vacio.png")
+    
+    def muerte_toque(self, enemigo):
+        if pygame.sprite.collide_rect(self, enemigo):
+            self.vivo = False
+            self.image = pygame.image.load("Images/Others/vacio.png")
+            
+    def muerte_oil(self, oils):
+        for o in oils:
+            if pygame.sprite.collide_rect(self, o):
+                self.vivo = False
+                self.image = pygame.image.load("Images/Others/vacio.png")
 
+    def collide(self, xvel, yvel, platforms,attack):
+        for p in platforms:
+            if pygame.sprite.collide_rect(self, p):
+                if isinstance(p, Platform) and not attack:
+                    self.clip(self.right_states[0])
+                elif isinstance(p, Platform) and attack:
+                    self.clip(self.attackright_states[0])
+                if xvel > 0:
+                    self.rect.right = p.rect.left
+                if xvel < 0:
+                        self.rect.left = p.rect.right
+                if yvel > 0:
+                    self.rect.bottom = p.rect.top
+                    self.onGround = True
+                    self.yvel = 0
+                if yvel < 0:
+                    self.rect.top = p.rect.bottom
+                    self.yvel = 0        
         
-        
-    def handle_event(self,key):
+    def handle_event(self,key,platforms):
         right=up=left=attack=False
         pygame.event.set_blocked(pygame.MOUSEMOTION)
 
@@ -215,22 +350,46 @@ class PJ(pygame.sprite.Sprite):
         if key[pygame.K_k]:
             attack=True
 
-        self.update(up,right,left,attack)
-        
-class Fondo(pygame.sprite.Sprite):
-    def __init__(self,imagen,left,top,resolution):
-        self.image = pygame.transform.scale(pygame.image.load(imagen).convert(), resolution)
-        self.rect = self.image.get_rect()
-        self.rect.left = left
-        self.rect.top = top
+        self.update(up,right,left,attack,platforms)
+
+#############################################################################
     
-    def mov(self,PJ,keys,time,fondo2,resolution):
+class Oil(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.image = pygame.image.load("Images/Others/oil.png")
+        self.image.convert()
+        self.rect = Rect(x, y, 18, 18)
 
-        if PJ.rect.x >= resolution[0]/2 and keys[K_RIGHT]:
-            self.rect.left -= 0.5 * time
-        if self.rect.left < 0 and keys[K_RIGHT] and PJ.rect.right == resolution[0]/2:
-            fondo2.rect.left = self.rect.right
+    def update(self):
+        pass
+    
+#############################################################################
+    
+class Valdosa(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.image = pygame.image.load("Images/Others/v.png")
+        self.image.convert()
+        self.rect = Rect(x, y, 18, 18)
 
+    def update(self):
+        pass
+    
+#############################################################################
+    
+class Water(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.image = pygame.image.load("Images/Others/w.png")
+        self.image.convert()
+        self.rect = Rect(x, y, 18, 18)
+
+    def update(self):
+        pass
+
+#################################################################################
+    
 def velocidad(pj, burbuja):
     x1 = pj.rect.centerx - burbuja.rect.centerx
     y1 = pj.rect.centery - burbuja.rect.centery
@@ -238,6 +397,8 @@ def velocidad(pj, burbuja):
     x2 = x1/norm
     y2 = y1/norm
     return x2, y2
+
+###############################################################################
 
 def texto(texto, posx, posy, color=(255, 255, 255)):
     fuente = pygame.font.Font("Images/Others/times.ttf", 25)
@@ -247,81 +408,112 @@ def texto(texto, posx, posy, color=(255, 255, 255)):
     salida_rect.centery = posy
     return salida, salida_rect
     
+#####################################################################   
 
 def main(resolution,sprites):
 
+    fondo='Images/Others/fondo1.png' 
     screen = pygame.display.set_mode(resolution)
     clock = pygame.time.Clock()
-    player = PJ((0, resolution[1]-60), sprites)
-    fondo1=Fondo("Images/Others/fondo1.png",0,0,resolution)
-    fondo2=Fondo("Images/Others/fondo2.png",resolution[0],0,resolution)
-    fondo3=Fondo("Images/Others/fondo3.png",resolution[0]*2,0,resolution)
-    posx, posx_rect = texto(str(player.rect.centerx), resolution[0]/2, resolution[1]/2,[0,0,0])
-    slime = Slime(resolution[0]/2, resolution[1]-30)
-    burbuja = Burbuja(resolution[0]*2/3, resolution[1]/2,resolution)
-    proyectil = Proyectil(burbuja)
-    vx = vy = 0
+    fondo1=Fondo('Images/Others/fondo1.png',0,0,resolution)
+    fondo2=Fondo('Images/Others/fondo2.png',fondo1.rect.right,0,resolution)
+    fondo3=Fondo('Images/Others/fondo3.png',fondo2.rect.right,0,resolution)
     
-    while player.vivo:
+    x=y=0
+    f= file("Maps/1_1.txt")
+    level = f.readlines()
+    platforms=[]
+    burbujas = []
+    slimes = []
+    oils = []
+    val=[]
+    wat=[]
+    
+    entities=pygame.sprite.Group()
+    for row in level:
+        for col in row:
+            if col =="p":
+                p = Platform(x, y)
+                platforms.append(p)
+                entities.add(p)
+            if col =="b":
+                b = Burbuja(x,y,resolution)
+                burbujas.append(b)
+                entities.add(b)
+                entities.add(b.proyectil)
+            if col =="s":
+                s = Slime(x,y)
+                slimes.append(s)
+                entities.add(s)
+            if col == "o":
+                o = Oil(x,y)
+                oils.append(o)
+                entities.add(o)
+            if col == "w":
+                w = Water(x,y)
+                wat.append(w)
+                entities.add(w)
+            if col == "v":
+                v = Valdosa(x,y)
+                val.append(v)
+                entities.add(v)
+            if col == "1":
+                player = PJ((x,y),sprites)
+                
+            x += 18
+        y += 18
+        x = 0
+    total_level_width  = len(level[0])*35
+    total_level_height = len(level)*35
+    camera = Camera(complex_camera, (total_level_width, total_level_height))
+    entities.add(player)
+
+
+    while True:
         
         time=clock.tick(60)
         key=pygame.key.get_pressed()
-        posx, posx_rect = texto(str(player.rect.centerx), resolution[0]/2, resolution[1]/2,[0,0,0])
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
-                pygame.quit()
                 sys.exit()
         if fondo1.rect.right>=0:
             fondo1.mov(player,key,time,fondo2,resolution)
         if fondo1.rect.right<=0:
-            fondo1.rect.left=resolution[0]*2
+            fondo1.rect.left=fondo3.rect.right
 
         if fondo2.rect.right>=0:
             fondo2.mov(player,key,time,fondo3,resolution)
         if fondo2.rect.right<=0:
-            fondo2.rect.left=resolution[0]*2
+            fondo2.rect.left=fondo1.rect.right
 
         if fondo3.rect.right>=0:
             fondo3.mov(player,key,time,fondo1,resolution)
         if fondo3.rect.right<=0:
-            fondo3.rect.left=resolution[0]*2
-        
-        if player.vivo:    
-            player.handle_event(key)
-        if slime.vivo:
-            slime.update(player, time)
-            player.muerte(proyectil, slime)
-        if burbuja.vivo:  
-            if proyectil.wait:
-                vx, vy = velocidad(player, burbuja)
-            burbuja.update(player, time, proyectil,resolution)
-            proyectil.update(player, time, burbuja, vx, vy,resolution)
-            player.muerte(proyectil, burbuja)
+            fondo3.rect.left=fondo2.rect.right
+
+        for b in burbujas:
+            b.update(player, time, platforms, oils,resolution)
+            player.muerte_proyectil(b)
+            player.muerte_toque(b)
+        for s in slimes:
+            s.update(player, time, platforms, oils)
+            player.muerte_toque(s)
+            
         player.attacking = False
+        player.muerte_oil(oils)
         
+        player.handle_event(key,platforms)
+        camera.update(player,resolution)
+        background=pygame.image.load(fondo).convert()
+        screen.blit(background,(0,0))
         screen.blit(fondo1.image,(fondo1.rect.left,fondo1.rect.top))
         screen.blit(fondo2.image,(fondo2.rect.left,fondo2.rect.top))
         screen.blit(fondo3.image,(fondo3.rect.left,fondo3.rect.top))
-        screen.blit(slime.image, slime.rect)
-        screen.blit(burbuja.image, burbuja.rect)
-        screen.blit(proyectil.image, proyectil.rect)
-        screen.blit(player.image, player.rect)
-        screen.blit(posx, posx_rect)
+        for e in entities:
+            screen.blit(e.image, camera.apply(e))
+     
         pygame.display.flip()
-        clock.tick(10)
-    
-    else:
-        gg, gg_rect = texto("GAMEOVER", resolution[0]/2, resolution[1]/2, [0,0,0])
-        screen.fill([200,200,200])
-        screen.blit(gg, gg_rect)
-        while True:
-            pygame.display.flip()
-            for eventos in pygame.event.get():
-                if eventos.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-        
-        
+        clock.tick(30)
     return 0
 
 

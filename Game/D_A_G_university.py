@@ -36,5 +36,5 @@ def game(vidas,resolution): #Hace correr los codigos
     character=menu(resolution)  #Para seleccionar personaje
     Character(1,1,character)   #para seleccionar vestimenta de personaje
     Main.main(resolution,Character(1,1,character))            
-game(3,(600,500))
+game(3,(1024,768))
 
