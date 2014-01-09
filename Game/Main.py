@@ -35,7 +35,7 @@ class Fondo(pygame.sprite.Sprite):
     
     def mov(self,PJ,keys,time,fondo2,resolution):
 
-        if PJ.rect.x >= resolution[0]/2 and keys[K_RIGHT]:
+        if PJ.rect.x >= resolution[0]/2 and keys[K_RIGHT] and not PJ.choque:
             self.rect.left -= 0.5 * time
         if self.rect.left < 0 and keys[K_RIGHT] and PJ.rect.right == resolution[0]/2:
             fondo2.rect.left = self.rect.right
@@ -291,11 +291,9 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
         self.onGround=False
-        if self.rect.y>=self.alt-10:
-            self.onGround=True
-            self.rect.y=self.alt-10
         self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
+        
     def reset(self,x,y):
         self.x = x
         self.y = y
@@ -323,7 +321,13 @@ class PJ(Entity,pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, p):
                 if isinstance(p, Platform) and not attack:
                     self.clip(self.right_states[0])
+                    self.choque=True
                 elif isinstance(p, Platform) and attack:
+                    self.clip(self.attackright_states[0])
+                    self.choque=True
+                if isinstance(p, Water) and not attack:
+                    self.clip(self.right_states[0])
+                elif isinstance(p, Water) and attack:
                     self.clip(self.attackright_states[0])
                 if xvel > 0:
                     self.rect.right = p.rect.left
