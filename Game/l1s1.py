@@ -201,6 +201,7 @@ class PJ(Entity,pygame.sprite.Sprite):
     def __init__(self, position,sprites):
         Entity.__init__(self)
         self.sheet = pygame.image.load(sprites)
+        print(sprites)
         self.sheet.set_clip(pygame.Rect(6, 52, 30, 50))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         self.rect = self.image.get_rect()
@@ -209,67 +210,73 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.yvel=0
         global vivo
         vivo=True
+        self.woman=False
+        self.stick=False
         self.onGround=False
         self.attacking = False
         self.frame = 0
         self.alt=position[1]
-
-        self.right_states={ 0: (6, 52, 30, 50),
-                           1: (49, 52, 30, 50),
-                           2: (86, 52, 30, 50),
-                           3: (123, 52, 35, 50),
-                           4: (167, 52, 35, 50),
-                           5: (215, 52, 30, 50)}
-        self.left_states={ 0: (6, 52, 30, 50),
-                           1: (49, 52, 30, 50),
-                           2: (86, 52, 30, 50),
-                           3: (123, 52, 35, 50),
-                           4: (167, 52, 35, 50),
-                           5: (215, 52, 30, 50)}
-        self.upright_states={ 0: (16, 216, 32, 45),
-                              1: (59, 216, 32, 45),
-                              2: (103, 216, 32, 45),
-                              3: (145, 216, 32, 45)}
-        self.attackright_states={0: (24, 372, 43, 53),
-                                 #1: (68, 372, 60, 53),
-                                 #2: (132, 372, 60, 53),
-                                 1: (195, 372, 60, 53),
-                                 2: (255, 372, 60, 53)}
-        #woman
-        self.left_states={0:(518,203,39,60),
-                           1:(553,203,39,60),
-                           2:(587,203,39,60),
-                           3:(624,203,39,60),
-                           4:(660,203,37,60),
-                           5:(691,203,39,60)}
-        self.right_states={0:(724,203,39,60),
-                           1:(758,203,37,60),
-                           2:(790,203,39,60),
-                           3:(827,203,39,60),
-                           4:(863,203,39,60),
-                           5:(900,203,39,60)}
-        self.upleft_states={0:(274,452,39,60),
-                           1:(320,452,39,60),
-                           2:(362,452,39,60),
-                           3:(410,452,39,60),
-                           4:(454,452,37,60),
-                           5:(492,452,39,60),
-                           6:(534,452,39,60),
-                           7:(570,452,39,60),
-                           8:(602,452,39,60),
-                           9:(640,452,39,60),
-                           10:(683,452,39,60)}
-        self.upright_states={0:(728,452,39,60),
-                           1:(770,452,39,60),
-                           2:(810,452,39,60),
-                           3:(849,452,39,60),
-                           4:(882,452,37,60),
-                           5:(920,452,39,60),
-                           6:(962,452,39,60),
-                           7:(1003,452,39,60),
-                           8:(1048,452,39,60),
-                           9:(1093,452,39,60),
-                           10:(1135,452,39,60)}
+        if sprites=='Images/Woman/1_1.png':
+            self.woman=True
+        if sprites=='Images/Sticks/1_1.png':
+            self.stick=True
+        if self.stick:
+            self.right_states={ 0: (6, 52, 30, 50),
+                               1: (49, 52, 30, 50),
+                               2: (86, 52, 30, 50),
+                               3: (123, 52, 35, 50),
+                               4: (167, 52, 35, 50),
+                               5: (215, 52, 30, 50)}
+            self.left_states={ 0: (6, 52, 30, 50),
+                               1: (49, 52, 30, 50),
+                               2: (86, 52, 30, 50),
+                               3: (123, 52, 35, 50),
+                               4: (167, 52, 35, 50),
+                               5: (215, 52, 30, 50)}
+            self.upright_states={ 0: (16, 216, 32, 45),
+                                  1: (59, 216, 32, 45),
+                                  2: (103, 216, 32, 45),
+                                  3: (145, 216, 32, 45)}
+            self.attackright_states={0: (24, 372, 43, 53),
+                                     #1: (68, 372, 60, 53),
+                                     #2: (132, 372, 60, 53),
+                                     1: (195, 372, 60, 53),
+                                     2: (255, 372, 60, 53)}
+        if self.woman:
+            self.left_states={0:(518,203,39,60),
+                               1:(553,203,39,60),
+                               2:(587,203,39,60),
+                               3:(624,203,39,60),
+                               4:(660,203,37,60),
+                               5:(691,203,39,60)}
+            self.right_states={0:(724,203,39,60),
+                               1:(758,203,37,60),
+                               2:(790,203,39,60),
+                               3:(827,203,39,60),
+                               4:(863,203,39,60),
+                               5:(900,203,39,60)}
+            self.upleft_states={0:(274,452,39,60),
+                               1:(320,452,39,60),
+                               2:(362,452,39,60),
+                               3:(410,452,39,60),
+                               4:(454,452,37,60),
+                               5:(492,452,39,60),
+                               6:(534,452,39,60),
+                               7:(570,452,39,60),
+                               8:(602,452,39,60),
+                               9:(640,452,39,60),
+                               10:(683,452,39,60)}
+            self.upright_states={0:(728,452,39,60),
+                               1:(770,452,39,60),
+                               2:(810,452,39,60),
+                               3:(849,452,39,60),
+                               4:(882,452,37,60),
+                               5:(920,452,39,60),
+                               6:(962,452,39,60),
+                               7:(1003,452,39,60),
+                               8:(1048,452,39,60),
+                               9:(1093,452,39,60),
+                               10:(1135,452,39,60)}
         
     def get_frame(self, frame_set):
         self.frame += 1
@@ -308,7 +315,7 @@ class PJ(Entity,pygame.sprite.Sprite):
         if not self.onGround:
             
             self.yvel+=5
-
+        if self.woman:
             if self.yvel<-4:
                 self.clip(self.upright_states[0])
             elif self.yvel<-1:
@@ -331,6 +338,17 @@ class PJ(Entity,pygame.sprite.Sprite):
                 self.clip(self.upright_states[8])
             if self.yvel>30:
                 self.clip(self.upright_states[10])
+                self.yvel=30
+        if self.stick:
+            if self.yvel<-4:
+                self.clip(self.upright_states[0])
+            elif self.yvel<4:
+                self.clip(self.upright_states[1])
+            elif self.yvel<12:
+                self.clip(self.upright_states[2])
+            elif self.yvel<20:
+                self.clip(self.upright_states[3])
+            if self.yvel>30:
                 self.yvel=30
                 
         if not (right or left):
