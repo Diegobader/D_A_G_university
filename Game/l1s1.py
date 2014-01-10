@@ -215,6 +215,8 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.onGround=False
         self.attacking = False
         self.frame = 0
+        self.facel=False
+        self.facer=True
         self.alt=position[1]
         if sprites=='Images/Woman/1_1.png':
             self.woman=True
@@ -293,6 +295,7 @@ class PJ(Entity,pygame.sprite.Sprite):
 
 
     def update(self, up,right, left,attack,platforms):
+        
         if attack:
             self.clip(self.attackright_states)
             self.attacking = True
@@ -304,41 +307,69 @@ class PJ(Entity,pygame.sprite.Sprite):
             else:
                 pass
         if right and self.onGround:
+            self.facer=True
+            self.facel=False
             if not attack:
                 self.clip(self.right_states)
             self.xvel= 8
             if attack:
                 self.clip(self.attackright_states)
         if left and self.onGround:
+            self.facer=False
+            self.facel=True
             self.clip(self.left_states)
             self.xvel= -8
         if not self.onGround:
-            
             self.yvel+=5
         if self.woman:
-            if self.yvel<-4:
-                self.clip(self.upright_states[0])
-            elif self.yvel<-1:
-                self.clip(self.upright_states[1])
-            elif self.yvel<2:
-                self.clip(self.upright_states[2])
-            elif self.yvel<4:
-                self.clip(self.upright_states[3])
-            elif self.yvel<7:
-                self.clip(self.upright_states[4])
-            elif self.yvel<10:
-                self.clip(self.upright_states[5])
-            elif self.yvel<12:
-                self.clip(self.upright_states[6])
-            elif self.yvel<13:
-                self.clip(self.upright_states[7])
-            elif self.yvel<20:
-                self.clip(self.upright_states[7])
-            elif self.yvel<23:
-                self.clip(self.upright_states[8])
-            if self.yvel>30:
-                self.clip(self.upright_states[10])
-                self.yvel=30
+            if self.facer:
+                if self.yvel<-4:
+                    self.clip(self.upright_states[0])
+                elif self.yvel<-1:
+                    self.clip(self.upright_states[1])
+                elif self.yvel<2:
+                    self.clip(self.upright_states[2])
+                elif self.yvel<4:
+                    self.clip(self.upright_states[3])
+                elif self.yvel<7:
+                    self.clip(self.upright_states[4])
+                elif self.yvel<10:
+                    self.clip(self.upright_states[5])
+                elif self.yvel<12:
+                    self.clip(self.upright_states[6])
+                elif self.yvel<13:
+                    self.clip(self.upright_states[7])
+                elif self.yvel<20:
+                    self.clip(self.upright_states[7])
+                elif self.yvel<23:
+                    self.clip(self.upright_states[8])
+                if self.yvel>30:
+                    self.clip(self.upright_states[10])
+                    self.yvel=30
+            if self.facel:
+                if self.yvel<-4:
+                    self.clip(self.upleft_states[0])
+                elif self.yvel<-1:
+                    self.clip(self.upleft_states[1])
+                elif self.yvel<2:
+                    self.clip(self.upleft_states[2])
+                elif self.yvel<4:
+                    self.clip(self.upleft_states[3])
+                elif self.yvel<7:
+                    self.clip(self.upleft_states[4])
+                elif self.yvel<10:
+                    self.clip(self.upleft_states[5])
+                elif self.yvel<12:
+                    self.clip(self.upleft_states[6])
+                elif self.yvel<13:
+                    self.clip(self.upleft_states[7])
+                elif self.yvel<20:
+                    self.clip(self.upleft_states[7])
+                elif self.yvel<23:
+                    self.clip(self.upleft_states[8])
+                if self.yvel>30:
+                    self.clip(self.upleft_states[10])
+                    self.yvel=30
         if self.stick:
             if self.yvel<-4:
                 self.clip(self.upright_states[0])
@@ -354,7 +385,10 @@ class PJ(Entity,pygame.sprite.Sprite):
         if not (right or left):
             self.xvel=0
         if self.onGround and self.xvel==0 and not attack:
-            self.clip(self.right_states[0])
+            if self.facer:
+                self.clip(self.right_states[0])
+            elif self.facel:
+                self.clip(self.left_states[0])
         self.rect.x+=self.xvel
         self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
@@ -397,13 +431,19 @@ class PJ(Entity,pygame.sprite.Sprite):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
                 if isinstance(p, Platform) and not attack:
-                    self.clip(self.right_states[0])
+                    if self.facer:
+                        self.clip(self.right_states[0])
+                    elif self.facel:
+                        self.clip(self.left_states[0])
                     self.choque=True
                 elif isinstance(p, Platform) and attack:
                     self.clip(self.attackright_states[0])
                     self.choque=True
                 if isinstance(p, Water) and not attack:
-                    self.clip(self.right_states[0])
+                    if self.facer:
+                        self.clip(self.right_states[0])
+                    elif self.facel:
+                        self.clip(self.left_states[0])
                 elif isinstance(p, Water) and attack:
                     self.clip(self.attackright_states[0])
                 if xvel > 0:
@@ -598,7 +638,7 @@ def main(resolution,sprites):
             print("muerto")
             break
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(20)
     return 0
 
 
