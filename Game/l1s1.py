@@ -81,6 +81,8 @@ class Burbuja(pygame.sprite.Sprite):
         self.vivo = True
         self.speed = 3
         self.proyectil = Proyectil(self)
+        global burbuja
+        burbuja=True
         
     def update(self, pj, time, platforms,oils,resolution):
         """Movimiento de Personaje y colisiones"""
@@ -112,6 +114,9 @@ class Burbuja(pygame.sprite.Sprite):
             
             if pygame.sprite.collide_rect(pj, self) and pj.attacking:
                 self.muerte()
+                global burbuja
+                burbuja=False
+                print(burbuja)
     
     def velocidad(self, pj):
         x1 = pj.rect.centerx - self.rect.centerx
@@ -211,6 +216,7 @@ class PJ(Entity,pygame.sprite.Sprite):
         vivo=True
         self.woman=False
         self.stick=False
+        self.man=False
         self.onGround=False
         self.attacking = False
         self.frame = 0
@@ -219,8 +225,10 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.alt=position[1]
         if sprites=='Images/Woman/1_1.png':
             self.woman=True
-        if sprites=='Images/Sticks/1_1.png':
+        elif sprites=='Images/Sticks/1_1.png':
             self.stick=True
+        elif sprites=='Images/Man/1_1.png':
+            self.man=True
         if self.stick:
             self.right_states={ 0: (6, 52, 30, 50),
                                1: (49, 52, 30, 50),
@@ -243,7 +251,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                                      #2: (132, 372, 60, 53),
                                      1: (195, 372, 60, 53),
                                      2: (255, 372, 60, 53)}
-        if self.woman:
+        elif self.woman:
             self.left_states={0:(518,203,39,60),
                                1:(553,203,39,60),
                                2:(587,203,39,60),
@@ -591,7 +599,7 @@ def main(resolution,sprites):
 
     while True:
         
-        time=clock.tick(60)
+        time=clock.tick(30)
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
@@ -634,9 +642,10 @@ def main(resolution,sprites):
         for e in entities:
             screen.blit(e.image, camera.apply(e))
         if vivo==False:
-            pass
+            return False
+        if burbuja==False:
+            return True
         pygame.display.flip()
-        clock.tick(20)
-    return 0
+        clock.tick(100)
 
 
