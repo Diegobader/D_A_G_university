@@ -13,6 +13,9 @@ def Character(level,stage,personaje):   #Elige Personaje y vestimenta de acuerdo
     elif personaje==3:
         return 'Images/Man/'+str(level)+'_'+str(stage)+'.png'
 def menu(resolution):    #Despliega menu que solo retorna valores de personje (depende de cuantos sean) y muestra creditos y cierra juego
+    pygame.mixer.init()
+    pygame.mixer.music.load("Music/Menu.mp3")
+    pygame.mixer.music.play(-1)
     screen = pygame.display.set_mode(resolution, 0, 32) 
     menu_items_1 = ('Start','Credits','Quit')
     menu_items_2 = ('Stick','Woman','Man','Back')
