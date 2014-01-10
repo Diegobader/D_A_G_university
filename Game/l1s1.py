@@ -201,7 +201,6 @@ class PJ(Entity,pygame.sprite.Sprite):
     def __init__(self, position,sprites):
         Entity.__init__(self)
         self.sheet = pygame.image.load(sprites)
-        print(sprites)
         self.sheet.set_clip(pygame.Rect(6, 52, 30, 50))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         self.rect = self.image.get_rect()

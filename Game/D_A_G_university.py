@@ -45,5 +45,7 @@ def game(vidas,resolution): #Hace correr los codigos
             self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/menu_chafa.png').convert(), self.resolution),(0,0))
         else:
             pygame.quit()
+    else:
+        pygame.quit()
 game(3,(500,300))
 
