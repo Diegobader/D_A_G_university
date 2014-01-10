@@ -35,7 +35,7 @@ class Fondo(pygame.sprite.Sprite):
     
     def mov(self,PJ,keys,time,fondo2,resolution):
 
-        if PJ.rect.x >= resolution[0]/2 and keys[K_RIGHT]:
+        if PJ.rect.x >= resolution[0]/2 and keys[K_RIGHT] and not PJ.choque:
             self.rect.left -= 0.5 * time
         if self.rect.left < 0 and keys[K_RIGHT] and PJ.rect.right == resolution[0]/2:
             fondo2.rect.left = self.rect.right
@@ -211,7 +211,7 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.attacking = False
         self.frame = 0
         self.alt=position[1]
-
+        #stick
         self.right_states={ 0: (6, 52, 30, 50),
                            1: (49, 52, 30, 50),
                            2: (86, 52, 30, 50),
@@ -233,6 +233,41 @@ class PJ(Entity,pygame.sprite.Sprite):
                                  #2: (132, 372, 60, 53),
                                  1: (195, 372, 60, 53),
                                  2: (255, 372, 60, 53)}
+        #woman
+        self.left_states={0:(518,203,39,60),
+                           1:(553,203,39,60),
+                           2:(587,203,39,60),
+                           3:(624,203,39,60),
+                           4:(660,203,37,60),
+                           5:(691,203,39,60)}
+        self.right_states={0:(724,203,39,60),
+                           1:(758,203,37,60),
+                           2:(790,203,39,60),
+                           3:(827,203,39,60),
+                           4:(863,203,39,60),
+                           5:(900,203,39,60)}
+        self.upleft_states={0:(274,452,39,60),
+                           1:(320,452,39,60),
+                           2:(362,452,39,60),
+                           3:(410,452,39,60),
+                           4:(454,452,37,60),
+                           5:(492,452,39,60),
+                           6:(534,452,39,60),
+                           7:(570,452,39,60),
+                           8:(602,452,39,60),
+                           9:(640,452,39,60),
+                           10:(683,452,39,60)}
+        self.upright_states={0:(728,452,39,60),
+                           1:(770,452,39,60),
+                           2:(810,452,39,60),
+                           3:(849,452,39,60),
+                           4:(882,452,37,60),
+                           5:(920,452,39,60),
+                           6:(962,452,39,60),
+                           7:(1003,452,39,60),
+                           8:(1048,452,39,60),
+                           9:(1093,452,39,60),
+                           10:(1135,452,39,60)}
         
     def get_frame(self, frame_set):
         self.frame += 1
@@ -271,16 +306,29 @@ class PJ(Entity,pygame.sprite.Sprite):
         if not self.onGround:
             
             self.yvel+=5
-
+            
             if self.yvel<-4:
                 self.clip(self.upright_states[0])
-            elif self.yvel<4:
+            elif self.yvel<-1:
                 self.clip(self.upright_states[1])
-            elif self.yvel<12:
+            elif self.yvel<2:
                 self.clip(self.upright_states[2])
-            elif self.yvel<20:
+            elif self.yvel<4:
                 self.clip(self.upright_states[3])
+            elif self.yvel<7:
+                self.clip(self.upright_states[4])
+            elif self.yvel<10:
+                self.clip(self.upright_states[5])
+            elif self.yvel<12:
+                self.clip(self.upright_states[6])
+            elif self.yvel<13:
+                self.clip(self.upright_states[7])
+            elif self.yvel<20:
+                self.clip(self.upright_states[7])
+            elif self.yvel<23:
+                self.clip(self.upright_states[8])
             if self.yvel>30:
+                self.clip(self.upright_states[10])
                 self.yvel=30
                 
         if not (right or left):
@@ -291,11 +339,9 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
         self.onGround=False
-        if self.rect.y>=self.alt-10:
-            self.onGround=True
-            self.rect.y=self.alt-10
         self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
+        
     def reset(self,x,y):
         self.x = x
         self.y = y
@@ -323,7 +369,13 @@ class PJ(Entity,pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, p):
                 if isinstance(p, Platform) and not attack:
                     self.clip(self.right_states[0])
+                    self.choque=True
                 elif isinstance(p, Platform) and attack:
+                    self.clip(self.attackright_states[0])
+                    self.choque=True
+                if isinstance(p, Water) and not attack:
+                    self.clip(self.right_states[0])
+                elif isinstance(p, Water) and attack:
                     self.clip(self.attackright_states[0])
                 if xvel > 0:
                     self.rect.right = p.rect.left
