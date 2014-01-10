@@ -479,6 +479,7 @@ def main(resolution,sprites):
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
+                pygame.quit()
                 sys.exit()
         if fondo1.rect.right>=0:
             fondo1.mov(player,key,time,fondo2,resolution)
