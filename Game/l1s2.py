@@ -1,7 +1,6 @@
 import pygame, sys, random, math
 from pygame.locals import *
 
-
 #############################################################################
 
 def rezize(image,resolution):
@@ -12,17 +11,6 @@ def rezize(image,resolution):
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-
-############################################################################
-
-class Platform(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        self.image = pygame.image.load("Images/Others/v.png")
-        self.image.convert()
-        self.rect = Rect(x, y, 18, 18)
-    def update(self):
-        pass
     
 #################################################################################################
       
@@ -357,7 +345,18 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.update(up,right,left,attack,platforms)
 
 #############################################################################
-    
+
+class Platform(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.image = pygame.image.load("Images/Others/v.png")
+        self.image.convert()
+        self.rect = Rect(x, y, 18, 18)
+    def update(self):
+        pass
+
+############################################################################
+
 class Oil(Entity):
     def __init__(self, x, y):
         Entity.__init__(self)
@@ -424,7 +423,7 @@ def main(resolution,sprites):
     fondo3=Fondo('Images/Others/fondo3.png',fondo2.rect.right,0,resolution)
     
     x=y=0
-    f= file("Maps/1_1.txt")
+    f= file("Maps/1_2.txt")
     level = f.readlines()
     platforms=[]
     burbujas = []
