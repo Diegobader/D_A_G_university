@@ -635,8 +635,7 @@ def main(resolution,sprites):
         for e in entities:
             screen.blit(e.image, camera.apply(e))
         if vivo==False:
-            print("muerto")
-            break
+            pass
         pygame.display.flip()
         clock.tick(20)
     return 0
