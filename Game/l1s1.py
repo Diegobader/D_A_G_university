@@ -311,8 +311,6 @@ class PJ(Entity,pygame.sprite.Sprite):
         if up:
             if self.onGround:
                 self.yvel=-30
-            else:
-                pass
         if right and self.onGround:
             self.facer=True
             self.facel=False
@@ -321,6 +319,7 @@ class PJ(Entity,pygame.sprite.Sprite):
             self.xvel= 8
             if attack:
                 self.clip(self.attackright_states)
+            
         if left and self.onGround:
             self.facer=False
             self.facel=True
@@ -328,66 +327,66 @@ class PJ(Entity,pygame.sprite.Sprite):
             self.xvel= -8
         if not self.onGround:
             self.yvel+=5
-        if self.woman:
-            if self.facer:
+            if self.woman:
+                if self.facer:
+                    if self.yvel<-4:
+                        self.clip(self.upright_states[0])
+                    elif self.yvel<-1:
+                        self.clip(self.upright_states[1])
+                    elif self.yvel<2:
+                        self.clip(self.upright_states[2])
+                    elif self.yvel<4:
+                        self.clip(self.upright_states[3])
+                    elif self.yvel<7:
+                        self.clip(self.upright_states[4])
+                    elif self.yvel<10:
+                        self.clip(self.upright_states[5])
+                    elif self.yvel<12:
+                        self.clip(self.upright_states[6])
+                    elif self.yvel<13:
+                        self.clip(self.upright_states[7])
+                    elif self.yvel<20:
+                        self.clip(self.upright_states[7])
+                    elif self.yvel<23:
+                        self.clip(self.upright_states[8])
+                    if self.yvel>30:
+                        self.clip(self.upright_states[10])
+                        self.yvel=30
+                if self.facel:
+                    if self.yvel<-4:
+                        self.clip(self.upleft_states[0])
+                    elif self.yvel<-1:
+                        self.clip(self.upleft_states[1])
+                    elif self.yvel<2:
+                        self.clip(self.upleft_states[2])
+                    elif self.yvel<4:
+                        self.clip(self.upleft_states[3])
+                    elif self.yvel<7:
+                        self.clip(self.upleft_states[4])
+                    elif self.yvel<10:
+                        self.clip(self.upleft_states[5])
+                    elif self.yvel<12:
+                        self.clip(self.upleft_states[6])
+                    elif self.yvel<13:
+                        self.clip(self.upleft_states[7])
+                    elif self.yvel<20:
+                        self.clip(self.upleft_states[7])
+                    elif self.yvel<23:
+                        self.clip(self.upleft_states[8])
+                    if self.yvel>30:
+                        self.clip(self.upleft_states[10])
+                        self.yvel=30
+            if self.stick:
                 if self.yvel<-4:
                     self.clip(self.upright_states[0])
-                elif self.yvel<-1:
+                elif self.yvel<4:
                     self.clip(self.upright_states[1])
-                elif self.yvel<2:
+                elif self.yvel<12:
                     self.clip(self.upright_states[2])
-                elif self.yvel<4:
+                elif self.yvel<20:
                     self.clip(self.upright_states[3])
-                elif self.yvel<7:
-                    self.clip(self.upright_states[4])
-                elif self.yvel<10:
-                    self.clip(self.upright_states[5])
-                elif self.yvel<12:
-                    self.clip(self.upright_states[6])
-                elif self.yvel<13:
-                    self.clip(self.upright_states[7])
-                elif self.yvel<20:
-                    self.clip(self.upright_states[7])
-                elif self.yvel<23:
-                    self.clip(self.upright_states[8])
                 if self.yvel>30:
-                    self.clip(self.upright_states[10])
                     self.yvel=30
-            if self.facel:
-                if self.yvel<-4:
-                    self.clip(self.upleft_states[0])
-                elif self.yvel<-1:
-                    self.clip(self.upleft_states[1])
-                elif self.yvel<2:
-                    self.clip(self.upleft_states[2])
-                elif self.yvel<4:
-                    self.clip(self.upleft_states[3])
-                elif self.yvel<7:
-                    self.clip(self.upleft_states[4])
-                elif self.yvel<10:
-                    self.clip(self.upleft_states[5])
-                elif self.yvel<12:
-                    self.clip(self.upleft_states[6])
-                elif self.yvel<13:
-                    self.clip(self.upleft_states[7])
-                elif self.yvel<20:
-                    self.clip(self.upleft_states[7])
-                elif self.yvel<23:
-                    self.clip(self.upleft_states[8])
-                if self.yvel>30:
-                    self.clip(self.upleft_states[10])
-                    self.yvel=30
-        if self.stick:
-            if self.yvel<-4:
-                self.clip(self.upright_states[0])
-            elif self.yvel<4:
-                self.clip(self.upright_states[1])
-            elif self.yvel<12:
-                self.clip(self.upright_states[2])
-            elif self.yvel<20:
-                self.clip(self.upright_states[3])
-            if self.yvel>30:
-                self.yvel=30
                 
         if not (right or left):
             self.xvel=0
@@ -599,7 +598,8 @@ def main(resolution,sprites):
 
     while True:
         
-        time=clock.tick(30)
+        time=clock.tick(100)
+
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
@@ -646,6 +646,9 @@ def main(resolution,sprites):
         if burbuja==False:
             return True
         pygame.display.flip()
-        clock.tick(100)
+
+        
+    return 0
+
 
 
