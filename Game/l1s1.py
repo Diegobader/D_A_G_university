@@ -172,7 +172,7 @@ class Slime(pygame.sprite.Sprite):
         self.rect = Rect(posx, posy, 39, 34)
         self.rect.centerx = posx
         self.rect.centery = posy
-        self.speed = 0.1
+        self.speed = 2
         self.vivo = True
         self.right = False
         self.left = True
@@ -247,34 +247,33 @@ class PJ(Entity,pygame.sprite.Sprite):
                                   2: (103, 216, 32, 45),
                                   3: (145, 216, 32, 45)}
             self.attackright_states={0: (24, 372, 43, 53),
-                                     #1: (68, 372, 60, 53),
-                                     #2: (132, 372, 60, 53),
+                                     #1: (68, 372, 60, 53),2: (132, 372, 60, 53),
                                      1: (195, 372, 60, 53),
                                      2: (255, 372, 60, 53)}
         elif self.woman:
-            self.left_states={0:(518,203,39,60),
-                               1:(553,203,39,60),
-                               2:(587,203,39,60),
-                               3:(624,203,39,60),
-                               4:(660,203,37,60),
-                               5:(691,203,39,60)}
+            self.left_states={ 5:(518,203,39,60),
+                               4:(553,203,39,60),
+                               3:(587,203,39,60),
+                               2:(624,203,39,60),
+                               1:(660,203,37,60),
+                               0:(691,203,39,60)}
             self.right_states={0:(724,203,39,60),
                                1:(758,203,37,60),
                                2:(790,203,39,60),
                                3:(827,203,39,60),
                                4:(863,203,39,60),
                                5:(900,203,39,60)}
-            self.upleft_states={0:(274,452,39,60),
-                               1:(320,452,39,60),
-                               2:(362,452,39,60),
-                               3:(410,452,39,60),
-                               4:(454,452,37,60),
+            self.upleft_states={10:(274,452,39,60),
+                               9:(320,452,39,60),
+                               8:(362,452,39,60),
+                               7:(410,452,39,60),
+                               6:(454,452,37,60),
                                5:(492,452,39,60),
-                               6:(534,452,39,60),
-                               7:(570,452,39,60),
-                               8:(602,452,39,60),
-                               9:(640,452,39,60),
-                               10:(683,452,39,60)}
+                               4:(534,452,39,60),
+                               3:(570,452,39,60),
+                               2:(602,452,39,60),
+                               1:(640,452,39,60),
+                               0:(683,452,39,60)}
             self.upright_states={0:(728,452,39,60),
                                1:(770,452,39,60),
                                2:(810,452,39,60),
@@ -286,6 +285,37 @@ class PJ(Entity,pygame.sprite.Sprite):
                                8:(1048,452,39,60),
                                9:(1093,452,39,60),
                                10:(1135,452,39,60)}
+            self.attackleft_states={#0:(305,586,39,60),1:(350,586,39,60),2:(393,586,39,60),3:(430,586,39,60),4:(470,586,39,60),
+                               3:(510,586,50,60),
+                               4:(510,586,50,60),
+                               #6:(565,586,45,60),
+                               2:(611,586,39,60),
+                               1:(653,586,39,60),
+                               0:(690,586,39,60)}
+            self.attackright_states={0:(725,586,39,60),
+                               1:(763,586,39,60),
+                               2:(763,586,39,60),
+                               #3:(803,586,39,60),4:(847,586,39,60),
+                               3:(895,586,50,60),
+                               4:(895,586,50,60)}
+                               #6:(945,586,45,60),7:(985,586,39,60),8:(653,586,39,60),9:(1025,586,39,60)}
+            self.atupleft_states={6:(348,522,39,60),
+                               5:(394,522,39,60),
+                               4:(436,522,39,60),
+                               #4:(480,522,39,60),
+                               3:(524,522,49,60),
+                               2:(524,522,49,60),
+                               1:(581,522,45,60),
+                               #1:(635,522,45,60),
+                               0:(685,522,39,60)}
+            self.atupright_states={0:(732,522,39,60),
+                               #1:(777,522,40,60),
+                               1:(830,522,45,60),
+                               2:(880,522,49,60),
+                               3:(880,522,49,60),
+                               #4:(980,522,39,60),
+                               4:(1023,522,39,60),
+                               5:(1067,522,39,60)}
         
     def get_frame(self, frame_set):
         self.frame += 1
@@ -301,16 +331,35 @@ class PJ(Entity,pygame.sprite.Sprite):
         return clipped_rect
 
 
-    def update(self, up,right, left,attack,platforms):
-        
+    def update(self,up,right,left,attack,platforms):
+################################################################################
+############################attack sin mas botones##############################
         if attack:
-            self.clip(self.attackright_states)
+            if self.facer:
+                self.clip(self.attackright_states)
+            elif self.facel:
+                self.clip(self.attackleft_states)
             self.attacking = True
-        if self.rect.y==self.alt-10:
-            self.onGround=True
+            if not self.onGround:
+                if right or self.facer:
+                    self.clip(self.atupright_states)
+                if left or self.facel:
+                    self.clip(self.atupleft_states)
+################################################################################
+########################### gravedad inicio salto#############################
+
         if up:
             if self.onGround:
                 self.yvel=-30
+
+            if attack and not self.onGround:
+                print(right,self.facer,attack,not self.onGround)
+                if right or self.facer:
+                    self.clip(self.atupright_states)
+                if left or self.facel:
+                    self.clip(self.atupleft_states)
+################################################################################
+############################## right/left on ground##############################                
         if right and self.onGround:
             self.facer=True
             self.facel=False
@@ -318,16 +367,22 @@ class PJ(Entity,pygame.sprite.Sprite):
                 self.clip(self.right_states)
             self.xvel= 8
             if attack:
-                self.clip(self.attackright_states)
-            
+                if self.onGround:
+                    self.clip(self.attackright_states)
         if left and self.onGround:
             self.facer=False
             self.facel=True
-            self.clip(self.left_states)
+            if not attack:
+                self.clip(self.left_states)
             self.xvel= -8
+            if attack:
+                if self.onGround:
+                    self.clip(self.attackleft_states)
+################################################################################
+################################################################################
         if not self.onGround:
             self.yvel+=5
-            if self.woman:
+            if self.woman and not attack:
                 if self.facer:
                     if self.yvel<-4:
                         self.clip(self.upright_states[0])
@@ -376,7 +431,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     if self.yvel>30:
                         self.clip(self.upleft_states[10])
                         self.yvel=30
-            if self.stick:
+            if self.stick and not attack:
                 if self.yvel<-4:
                     self.clip(self.upright_states[0])
                 elif self.yvel<4:
@@ -395,18 +450,14 @@ class PJ(Entity,pygame.sprite.Sprite):
                 self.clip(self.right_states[0])
             elif self.facel:
                 self.clip(self.left_states[0])
+        if self.rect.y==self.alt-10:
+            self.onGround=True
         self.rect.x+=self.xvel
         self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
         self.onGround=False
         self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
-        
-    def reset(self,x,y):
-        self.x = x
-        self.y = y
-
-        self.rect.center = (self.x, self.y,attack)
         
     def muerte_proyectil(self, enemigo):
         if pygame.sprite.collide_rect(self, enemigo.proyectil):
@@ -443,7 +494,10 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.clip(self.left_states[0])
                     self.choque=True
                 elif isinstance(p, Platform) and attack:
-                    self.clip(self.attackright_states[0])
+                    if self.facer:
+                        self.clip(self.attackright_states[0])
+                    elif self.facel:
+                        self.clip(self.attackleft_states[0])
                     self.choque=True
                 if isinstance(p, Water) and not attack:
                     if self.facer:
@@ -451,7 +505,10 @@ class PJ(Entity,pygame.sprite.Sprite):
                     elif self.facel:
                         self.clip(self.left_states[0])
                 elif isinstance(p, Water) and attack:
-                    self.clip(self.attackright_states[0])
+                    if self.facer:
+                        self.clip(self.attackright_states[0])
+                    elif self.facel:
+                        self.clip(self.attackleft_states[0])
                 if xvel > 0:
                     self.rect.right = p.rect.left
                 if xvel < 0:
@@ -598,7 +655,7 @@ def main(resolution,sprites):
 
     while True:
         
-        time=clock.tick(100)
+        time=clock.tick(30)
 
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
@@ -642,13 +699,10 @@ def main(resolution,sprites):
         for e in entities:
             screen.blit(e.image, camera.apply(e))
         if vivo==False:
-            return False
+            pass
         if burbuja==False:
             return True
         pygame.display.flip()
 
         
     return 0
-
-
-

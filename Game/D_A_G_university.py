@@ -19,7 +19,7 @@ def menu(resolution):    #Despliega menu que solo retorna valores de personje (d
     screen = pygame.display.set_mode(resolution, 0, 32) 
     menu_items_1 = ('Start','Credits','Quit')
     menu_items_2 = ('Woman','Man','Stick','Back')
-    pygame.display.set_caption('Game Menu')
+    pygame.display.set_caption('D_A_G')
     while True:
         gm1 = Menu.GameMenu(screen, menu_items_1,resolution, ((resolution[0])/10)).run()
         if gm1==1:
