@@ -1,7 +1,6 @@
 import pygame, sys, random, math
 from pygame.locals import *
 
-
 #############################################################################
 
 def rezize(image,resolution):
@@ -12,17 +11,6 @@ def rezize(image,resolution):
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-
-############################################################################
-
-class Platform(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        self.image = pygame.image.load("Images/Others/v.png")
-        self.image.convert()
-        self.rect = Rect(x, y, 18, 18)
-    def update(self):
-        pass
     
 #################################################################################################
       
@@ -211,7 +199,7 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.attacking = False
         self.frame = 0
         self.alt=position[1]
-        #stick
+
         self.right_states={ 0: (6, 52, 30, 50),
                            1: (49, 52, 30, 50),
                            2: (86, 52, 30, 50),
@@ -233,41 +221,6 @@ class PJ(Entity,pygame.sprite.Sprite):
                                  #2: (132, 372, 60, 53),
                                  1: (195, 372, 60, 53),
                                  2: (255, 372, 60, 53)}
-        #woman
-        self.left_states={0:(518,203,39,60),
-                           1:(553,203,39,60),
-                           2:(587,203,39,60),
-                           3:(624,203,39,60),
-                           4:(660,203,37,60),
-                           5:(691,203,39,60)}
-        self.right_states={0:(724,203,39,60),
-                           1:(758,203,37,60),
-                           2:(790,203,39,60),
-                           3:(827,203,39,60),
-                           4:(863,203,39,60),
-                           5:(900,203,39,60)}
-        self.upleft_states={0:(274,452,39,60),
-                           1:(320,452,39,60),
-                           2:(362,452,39,60),
-                           3:(410,452,39,60),
-                           4:(454,452,37,60),
-                           5:(492,452,39,60),
-                           6:(534,452,39,60),
-                           7:(570,452,39,60),
-                           8:(602,452,39,60),
-                           9:(640,452,39,60),
-                           10:(683,452,39,60)}
-        self.upright_states={0:(728,452,39,60),
-                           1:(770,452,39,60),
-                           2:(810,452,39,60),
-                           3:(849,452,39,60),
-                           4:(882,452,37,60),
-                           5:(920,452,39,60),
-                           6:(962,452,39,60),
-                           7:(1003,452,39,60),
-                           8:(1048,452,39,60),
-                           9:(1093,452,39,60),
-                           10:(1135,452,39,60)}
         
     def get_frame(self, frame_set):
         self.frame += 1
@@ -306,29 +259,16 @@ class PJ(Entity,pygame.sprite.Sprite):
         if not self.onGround:
             
             self.yvel+=5
-            
+
             if self.yvel<-4:
                 self.clip(self.upright_states[0])
-            elif self.yvel<-1:
-                self.clip(self.upright_states[1])
-            elif self.yvel<2:
-                self.clip(self.upright_states[2])
             elif self.yvel<4:
-                self.clip(self.upright_states[3])
-            elif self.yvel<7:
-                self.clip(self.upright_states[4])
-            elif self.yvel<10:
-                self.clip(self.upright_states[5])
+                self.clip(self.upright_states[1])
             elif self.yvel<12:
-                self.clip(self.upright_states[6])
-            elif self.yvel<13:
-                self.clip(self.upright_states[7])
+                self.clip(self.upright_states[2])
             elif self.yvel<20:
-                self.clip(self.upright_states[7])
-            elif self.yvel<23:
-                self.clip(self.upright_states[8])
+                self.clip(self.upright_states[3])
             if self.yvel>30:
-                self.clip(self.upright_states[10])
                 self.yvel=30
                 
         if not (right or left):
@@ -405,7 +345,18 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.update(up,right,left,attack,platforms)
 
 #############################################################################
-    
+
+class Platform(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.image = pygame.image.load("Images/Others/v.png")
+        self.image.convert()
+        self.rect = Rect(x, y, 18, 18)
+    def update(self):
+        pass
+
+############################################################################
+
 class Oil(Entity):
     def __init__(self, x, y):
         Entity.__init__(self)
@@ -472,7 +423,7 @@ def main(resolution,sprites):
     fondo3=Fondo('Images/Others/fondo3.png',fondo2.rect.right,0,resolution)
     
     x=y=0
-    f= file("Maps/1_1.txt")
+    f= file("Maps/1_2.txt")
     level = f.readlines()
     platforms=[]
     burbujas = []
@@ -527,6 +478,7 @@ def main(resolution,sprites):
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
+                pygame.quit()
                 sys.exit()
         if fondo1.rect.right>=0:
             fondo1.mov(player,key,time,fondo2,resolution)
