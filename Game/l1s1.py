@@ -236,20 +236,39 @@ class PJ(Entity,pygame.sprite.Sprite):
                                3: (123, 52, 35, 50),
                                4: (167, 52, 35, 50),
                                5: (215, 52, 30, 50)}
-            self.left_states={ 0: (6, 52, 30, 50),
-                               1: (49, 52, 30, 50),
-                               2: (86, 52, 30, 50),
-                               3: (123, 52, 35, 50),
-                               4: (167, 52, 35, 50),
-                               5: (215, 52, 30, 50)}
+            self.left_states={ 0: (1175, 52, 30, 50),
+                               1: (1136, 52, 30, 50),
+                               2: (1090, 52, 30, 50),
+                               3: (1045, 52, 35, 50),
+                               4: (1012, 52, 35, 50),
+                               5: (978, 52, 30, 50)}
             self.upright_states={ 0: (16, 216, 32, 45),
                                   1: (59, 216, 32, 45),
                                   2: (103, 216, 32, 45),
                                   3: (145, 216, 32, 45)}
+            self.upleft_states={ 0: (1245, 216, 32, 45),
+                                  1: (1200, 216, 32, 45),
+                                  2: (1157, 216, 32, 45),
+                                  3: (1119, 216, 32, 45)}
             self.attackright_states={0: (24, 372, 43, 53),
                                      #1: (68, 372, 60, 53),2: (132, 372, 60, 53),
                                      1: (195, 372, 60, 53),
                                      2: (255, 372, 60, 53)}
+            self.attackleft_states={0: (1223, 372, 43, 53),
+                                     #1: (1160, 372, 60, 53),2: (1100, 372, 60, 53),
+                                     1: (1040, 372, 60, 53),
+                                     2: (984, 372, 60, 53)}
+            self.atupright_states={#0:(2,485,60,53),
+                                   #1:(72,485,60,53),
+                                   #2:(130,483,60,53),
+                                   #3:(180,483,32,53),
+                                   0:(222,485,57,53)}
+            self.atupleft_states={#0:(1232,485,57,53),
+                                   #1:(72,485,60,53),
+                                   #1:(1157,485,57,53),
+                                   #3:(1063,483,32,53),
+                                   0:(1002,485,57,53)}
+################################# woman ########################################
         elif self.woman:
             self.left_states={ 5:(518,203,39,60),
                                4:(553,203,39,60),
@@ -343,7 +362,7 @@ class PJ(Entity,pygame.sprite.Sprite):
             if not self.onGround:
                 if right or self.facer:
                     self.clip(self.atupright_states)
-                if left or self.facel:
+                elif left or self.facel:
                     self.clip(self.atupleft_states)
 ################################################################################
 ########################### gravedad inicio salto#############################
@@ -351,12 +370,10 @@ class PJ(Entity,pygame.sprite.Sprite):
         if up:
             if self.onGround:
                 self.yvel=-30
-
             if attack and not self.onGround:
-                print(right,self.facer,attack,not self.onGround)
                 if right or self.facer:
                     self.clip(self.atupright_states)
-                if left or self.facel:
+                elif left or self.facel:
                     self.clip(self.atupleft_states)
 ################################################################################
 ############################## right/left on ground##############################                
@@ -369,6 +386,8 @@ class PJ(Entity,pygame.sprite.Sprite):
             if attack:
                 if self.onGround:
                     self.clip(self.attackright_states)
+                if up:
+                    self.clip(self.atupleft_states)
         if left and self.onGround:
             self.facer=False
             self.facel=True
@@ -378,6 +397,8 @@ class PJ(Entity,pygame.sprite.Sprite):
             if attack:
                 if self.onGround:
                     self.clip(self.attackleft_states)
+                if up:
+                    self.clip(self.atupleft_states)
 ################################################################################
 ################################################################################
         if not self.onGround:
@@ -432,16 +453,28 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.clip(self.upleft_states[10])
                         self.yvel=30
             if self.stick and not attack:
-                if self.yvel<-4:
-                    self.clip(self.upright_states[0])
-                elif self.yvel<4:
-                    self.clip(self.upright_states[1])
-                elif self.yvel<12:
-                    self.clip(self.upright_states[2])
-                elif self.yvel<20:
-                    self.clip(self.upright_states[3])
-                if self.yvel>30:
-                    self.yvel=30
+                if self.facer:
+                    if self.yvel<-4:
+                        self.clip(self.upright_states[0])
+                    elif self.yvel<4:
+                        self.clip(self.upright_states[1])
+                    elif self.yvel<12:
+                        self.clip(self.upright_states[2])
+                    elif self.yvel<20:
+                        self.clip(self.upright_states[3])
+                    if self.yvel>30:
+                        self.yvel=30
+                if self.facel:
+                    if self.yvel<-4:
+                        self.clip(self.upleft_states[0])
+                    elif self.yvel<4:
+                        self.clip(self.upleft_states[1])
+                    elif self.yvel<12:
+                        self.clip(self.upleft_states[2])
+                    elif self.yvel<20:
+                        self.clip(self.upleft_states[3])
+                    if self.yvel>30:
+                        self.yvel=30
                 
         if not (right or left):
             self.xvel=0
