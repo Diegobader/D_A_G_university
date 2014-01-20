@@ -229,6 +229,7 @@ class PJ(Entity,pygame.sprite.Sprite):
             self.stick=True
         elif sprites=='Images/Man/1_1.png':
             self.man=True
+################################### stick ######################################
         if self.stick:
             self.right_states={0: (6, 52, 30, 50),
                                1: (49, 52, 30, 50),
@@ -335,6 +336,9 @@ class PJ(Entity,pygame.sprite.Sprite):
                                #4:(980,522,39,60),
                                4:(1023,522,39,60),
                                5:(1067,522,39,60)}
+            
+####################################   man  #######################################
+            
         
     def get_frame(self, frame_set):
         self.frame += 1
