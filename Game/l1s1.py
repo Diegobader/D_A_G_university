@@ -87,26 +87,18 @@ class Burbuja(pygame.sprite.Sprite):
     def update(self, pj, time, platforms,oils,resolution):
         """Movimiento de Personaje y colisiones"""
         if self.vivo:
-            #if self.rect.top <= 0:
-            #    self.rect.top = 0
-            #    self.speed *= -1 
-            #if self.rect.bottom >= resolution[1]:
-            #    self.rect.bottom = resolution[1]
-            #    self.speed *= -1 
             r = random.randint(0,1)
             if r == 1 and self.proyectil.wait:
                 self.proyectil.wait = False 
             vx, vy = self.velocidad(pj) 
 
-            for p in platforms:
-                if pygame.sprite.collide_rect(self, p):
-                    self.speed *= -1
-                    self.rect.centery += self.speed
+            if pygame.sprite.spritecollideany(self, platforms):
+                self.speed *= -1
+                self.rect.centery += self.speed
 
-            for o in oils:
-                if pygame.sprite.collide_circle(self, o):
-                    self.speed *= -1
-                    self.rect.centery += self.speed
+            if pygame.sprite.spritecollideany(self, oils):
+                self.speed *= -1
+                self.rect.centery += self.speed
                     
             self.proyectil.update(pj, time, self, vx, vy, platforms, oils,resolution) 
 
@@ -150,12 +142,10 @@ class Proyectil(pygame.sprite.Sprite):
             self.image = pygame.image.load('Images/Others/bb_p.png')
             self.rect.centerx += vx*self.speed
             self.rect.centery += vy*self.speed
-            for p in platforms:
-                if pygame.sprite.collide_rect(self, p):
-                    self.desaparicion(burbuja)
-            for o in oils:
-                if pygame.sprite.collide_rect(self, o):
-                    self.desaparicion(burbuja)
+            if pygame.sprite.spritecollideany(self, platforms):
+                self.desaparicion(burbuja)
+            if pygame.sprite.spritecollideany(self, platforms):
+                self.desaparicion(burbuja)
             if not burbuja.vivo or self.rect.left <= 0 or self.rect.top <= 0 or self.rect.bottom >= resolution[1]:
                 self.desaparicion(burbuja)
     
@@ -172,27 +162,19 @@ class Slime(pygame.sprite.Sprite):
         self.rect = Rect(posx, posy, 39, 34)
         self.rect.centerx = posx
         self.rect.centery = posy
-        self.speed = 2
+        self.speed = 3
         self.vivo = True
         self.right = False
         self.left = True
     
     def update(self, pj, time,platforms,oils):
         if self.vivo:
-            #if pj.rect.centerx - self.rect.centerx > 0:
-            #    self.right = True
-            #    self.left = False
-            #if pj.rect.centerx - self.rect.centerx < 0:
-            #    self.left = True
-            #    self.right = False
-            for p in platforms:
-                if pygame.sprite.collide_rect(self,p):
-                    self.speed *= -1
-                    self.rect.centerx += self.speed
-            for o in oils:
-                if pygame.sprite.collide_rect(self, o):
-                    self.speed *= -1
-                    self.rect.centerx += self.speed
+            if pygame.sprite.spritecollideany(self, platforms):
+                self.speed *= -1
+                self.rect.centerx += self.speed
+            if pygame.sprite.spritecollideany(self, platforms):
+                self.speed *= -1
+                self.rect.centerx += self.speed
             self.rect.centerx += self.speed
             if pygame.sprite.collide_rect(pj, self) and pj.attacking:
                 self.muerte()
