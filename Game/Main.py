@@ -81,8 +81,6 @@ class Burbuja(pygame.sprite.Sprite):
         self.vivo = True
         self.speed = 3
         self.proyectil = Proyectil(self)
-        global burbuja
-        burbuja=True
         
     def update(self, pj, time, platforms,oils,resolution):
         """Movimiento de Personaje y colisiones"""
@@ -114,9 +112,6 @@ class Burbuja(pygame.sprite.Sprite):
             
             if pygame.sprite.collide_rect(pj, self) and pj.attacking:
                 self.muerte()
-                global burbuja
-                burbuja=False
-                print(burbuja)
     
     def velocidad(self, pj):
         x1 = pj.rect.centerx - self.rect.centerx
@@ -172,7 +167,7 @@ class Slime(pygame.sprite.Sprite):
         self.rect = Rect(posx, posy, 39, 34)
         self.rect.centerx = posx
         self.rect.centery = posy
-        self.speed = 2
+        self.speed = 0.1
         self.vivo = True
         self.right = False
         self.left = True
@@ -212,133 +207,67 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.rect.topleft = position
         self.xvel=0
         self.yvel=0
-        global vivo
-        vivo=True
-        self.woman=False
-        self.stick=False
-        self.man=False
         self.onGround=False
         self.attacking = False
         self.frame = 0
-        self.facel=False
-        self.facer=True
         self.alt=position[1]
-        if sprites=='Images/Woman/1_1.png':
-            self.woman=True
-        elif sprites=='Images/Sticks/1_1.png':
-            self.stick=True
-        elif sprites=='Images/Man/1_1.png':
-            self.man=True
-################################### stick ######################################
-        if self.stick:
-            self.right_states={0: (6, 52, 30, 50),
-                               1: (49, 52, 30, 50),
-                               #2: (86, 52, 30, 50),
-                               #3: (123, 52, 35, 50),
-                               #4: (167, 52, 35, 50),
-                               2: (215, 52, 30, 50)}
-            self.left_states={ 0: (1175, 52, 30, 50),
-                               1: (1136, 52, 30, 50),
-                               #2: (1090, 52, 30, 50),
-                               #3: (1045, 52, 35, 50),
-                               #4: (1012, 52, 35, 50),
-                               2: (978, 52, 30, 50)}
-            self.upright_states={ 0: (16, 216, 32, 45),
-                                  1: (59, 216, 32, 45),
-                                  2: (103, 216, 32, 45),
-                                  3: (145, 216, 32, 45)}
-            self.upleft_states={  0: (1245, 216, 32, 45),
-                                  1: (1200, 216, 32, 45),
-                                  2: (1157, 216, 32, 45),
-                                  3: (1119, 216, 32, 45)}
-            self.attackright_states={0: (24, 372, 43, 53),
-                                     #1: (68, 372, 60, 53),2: (132, 372, 60, 53),
-                                     1: (195, 372, 60, 53),
-                                     2: (255, 372, 60, 53)}
-            self.attackleft_states={0: (1223, 372, 43, 53),
-                                     #1: (1160, 372, 60, 53),2: (1100, 372, 60, 53),
-                                     1: (1040, 372, 60, 53),
-                                     2: (984, 372, 60, 53)}
-            self.atupright_states={#0:(2,485,60,53),
-                                   #1:(72,485,60,53),
-                                   #2:(130,483,60,53),
-                                   #3:(180,483,32,53),
-                                   0:(222,485,57,53)}
-            self.atupleft_states={#0:(1232,485,57,53),
-                                   #1:(72,485,60,53),
-                                   #1:(1157,485,57,53),
-                                   #3:(1063,483,32,53),
-                                   0:(1002,485,57,53)}
-################################# woman ########################################
-        elif self.woman:
-            self.left_states={ 5:(518,203,39,60),
-                               4:(553,203,39,60),
-                               3:(587,203,39,60),
-                               2:(624,203,39,60),
-                               1:(660,203,37,60),
-                               0:(691,203,39,60)}
-            self.right_states={0:(724,203,39,60),
-                               1:(758,203,37,60),
-                               2:(790,203,39,60),
-                               #3:(827,203,39,60),
-                               3:(863,203,39,60)}
-                               #3:(900,203,39,60)}
-            self.upleft_states={10:(274,452,39,60),
-                               9:(320,452,39,60),
-                               8:(362,452,39,60),
-                               7:(410,452,39,60),
-                               6:(454,452,37,60),
-                               5:(492,452,39,60),
-                               4:(534,452,39,60),
-                               3:(570,452,39,60),
-                               2:(602,452,39,60),
-                               1:(640,452,39,60),
-                               0:(683,452,39,60)}
-            self.upright_states={0:(728,452,39,60),
-                               1:(770,452,39,60),
-                               2:(810,452,39,60),
-                               3:(849,452,39,60),
-                               4:(882,452,37,60),
-                               5:(920,452,39,60),
-                               6:(962,452,39,60),
-                               7:(1003,452,39,60),
-                               8:(1048,452,39,60),
-                               9:(1093,452,39,60),
-                               10:(1135,452,39,60)}
-            self.attackleft_states={#0:(305,586,39,60),1:(350,586,39,60),2:(393,586,39,60),3:(430,586,39,60),4:(470,586,39,60),
-                               3:(510,586,50,60),
-                               4:(510,586,50,60),
-                               #6:(565,586,45,60),
-                               2:(611,586,39,60),
-                               1:(653,586,39,60),
-                               0:(690,586,39,60)}
-            self.attackright_states={0:(725,586,39,60),
-                               1:(763,586,39,60),
-                               2:(763,586,39,60),
-                               #3:(803,586,39,60),4:(847,586,39,60),
-                               3:(895,586,50,60),
-                               4:(895,586,50,60)}
-                               #6:(945,586,45,60),7:(985,586,39,60),8:(653,586,39,60),9:(1025,586,39,60)}
-            self.atupleft_states={6:(348,522,39,60),
-                               5:(394,522,39,60),
-                               4:(436,522,39,60),
-                               #4:(480,522,39,60),
-                               3:(524,522,49,60),
-                               2:(524,522,49,60),
-                               1:(581,522,45,60),
-                               #1:(635,522,45,60),
-                               0:(685,522,39,60)}
-            self.atupright_states={0:(732,522,39,60),
-                               #1:(777,522,40,60),
-                               1:(830,522,45,60),
-                               2:(880,522,49,60),
-                               3:(880,522,49,60),
-                               #4:(980,522,39,60),
-                               4:(1023,522,39,60),
-                               5:(1067,522,39,60)}
-            
-####################################   man  #######################################
-            
+        #stick
+        self.right_states={ 0: (6, 52, 30, 50),
+                           1: (49, 52, 30, 50),
+                           2: (86, 52, 30, 50),
+                           3: (123, 52, 35, 50),
+                           4: (167, 52, 35, 50),
+                           5: (215, 52, 30, 50)}
+        self.left_states={ 0: (6, 52, 30, 50),
+                           1: (49, 52, 30, 50),
+                           2: (86, 52, 30, 50),
+                           3: (123, 52, 35, 50),
+                           4: (167, 52, 35, 50),
+                           5: (215, 52, 30, 50)}
+        self.upright_states={ 0: (16, 216, 32, 45),
+                              1: (59, 216, 32, 45),
+                              2: (103, 216, 32, 45),
+                              3: (145, 216, 32, 45)}
+        self.attackright_states={0: (24, 372, 43, 53),
+                                 #1: (68, 372, 60, 53),
+                                 #2: (132, 372, 60, 53),
+                                 1: (195, 372, 60, 53),
+                                 2: (255, 372, 60, 53)}
+        #woman
+        self.left_states={0:(518,203,39,60),
+                           1:(553,203,39,60),
+                           2:(587,203,39,60),
+                           3:(624,203,39,60),
+                           4:(660,203,37,60),
+                           5:(691,203,39,60)}
+        self.right_states={0:(724,203,39,60),
+                           1:(758,203,37,60),
+                           2:(790,203,39,60),
+                           3:(827,203,39,60),
+                           4:(863,203,39,60),
+                           5:(900,203,39,60)}
+        self.upleft_states={0:(274,452,39,60),
+                           1:(320,452,39,60),
+                           2:(362,452,39,60),
+                           3:(410,452,39,60),
+                           4:(454,452,37,60),
+                           5:(492,452,39,60),
+                           6:(534,452,39,60),
+                           7:(570,452,39,60),
+                           8:(602,452,39,60),
+                           9:(640,452,39,60),
+                           10:(683,452,39,60)}
+        self.upright_states={0:(728,452,39,60),
+                           1:(770,452,39,60),
+                           2:(810,452,39,60),
+                           3:(849,452,39,60),
+                           4:(882,452,37,60),
+                           5:(920,452,39,60),
+                           6:(962,452,39,60),
+                           7:(1003,452,39,60),
+                           8:(1048,452,39,60),
+                           9:(1093,452,39,60),
+                           10:(1135,452,39,60)}
         
     def get_frame(self, frame_set):
         self.frame += 1
@@ -354,141 +283,58 @@ class PJ(Entity,pygame.sprite.Sprite):
         return clipped_rect
 
 
-    def update(self,up,right,left,attack,platforms):
-################################################################################
-############################attack sin mas botones##############################
+    def update(self, up,right, left,attack,platforms):
         if attack:
-            if self.facer:
-                self.clip(self.attackright_states)
-            elif self.facel:
-                self.clip(self.attackleft_states)
+            self.clip(self.attackright_states)
             self.attacking = True
-            if not self.onGround:
-                if right or self.facer:
-                    self.clip(self.atupright_states)
-                elif left or self.facel:
-                    self.clip(self.atupleft_states)
-################################################################################
-########################### gravedad inicio salto#############################
-
+        if self.rect.y==self.alt-10:
+            self.onGround=True
         if up:
             if self.onGround:
                 self.yvel=-30
-            if attack and not self.onGround:
-                if right or self.facer:
-                    self.clip(self.atupright_states)
-                elif left or self.facel:
-                    self.clip(self.atupleft_states)
-################################################################################
-############################## right/left on ground##############################                
+            else:
+                pass
         if right and self.onGround:
-            self.facer=True
-            self.facel=False
             if not attack:
                 self.clip(self.right_states)
-            self.xvel= 8
+            self.xvel= 5
             if attack:
-                if self.onGround:
-                    self.clip(self.attackright_states)
-                if up:
-                    self.clip(self.atupleft_states)
+                self.clip(self.attackright_states)
         if left and self.onGround:
-            self.facer=False
-            self.facel=True
-            if not attack:
-                self.clip(self.left_states)
-            self.xvel= -8
-            if attack:
-                if self.onGround:
-                    self.clip(self.attackleft_states)
-                if up:
-                    self.clip(self.atupleft_states)
-################################################################################
-################################################################################
+            self.clip(self.left_states)
+            self.xvel= -5
         if not self.onGround:
+            
             self.yvel+=5
-            if self.woman and not attack:
-                if self.facer:
-                    if self.yvel<-4:
-                        self.clip(self.upright_states[0])
-                    elif self.yvel<-1:
-                        self.clip(self.upright_states[1])
-                    elif self.yvel<2:
-                        self.clip(self.upright_states[2])
-                    elif self.yvel<4:
-                        self.clip(self.upright_states[3])
-                    elif self.yvel<7:
-                        self.clip(self.upright_states[4])
-                    elif self.yvel<10:
-                        self.clip(self.upright_states[5])
-                    elif self.yvel<12:
-                        self.clip(self.upright_states[6])
-                    elif self.yvel<13:
-                        self.clip(self.upright_states[7])
-                    elif self.yvel<20:
-                        self.clip(self.upright_states[7])
-                    elif self.yvel<23:
-                        self.clip(self.upright_states[8])
-                    if self.yvel>30:
-                        self.clip(self.upright_states[10])
-                        self.yvel=30
-                if self.facel:
-                    if self.yvel<-4:
-                        self.clip(self.upleft_states[0])
-                    elif self.yvel<-1:
-                        self.clip(self.upleft_states[1])
-                    elif self.yvel<2:
-                        self.clip(self.upleft_states[2])
-                    elif self.yvel<4:
-                        self.clip(self.upleft_states[3])
-                    elif self.yvel<7:
-                        self.clip(self.upleft_states[4])
-                    elif self.yvel<10:
-                        self.clip(self.upleft_states[5])
-                    elif self.yvel<12:
-                        self.clip(self.upleft_states[6])
-                    elif self.yvel<13:
-                        self.clip(self.upleft_states[7])
-                    elif self.yvel<20:
-                        self.clip(self.upleft_states[7])
-                    elif self.yvel<23:
-                        self.clip(self.upleft_states[8])
-                    if self.yvel>30:
-                        self.clip(self.upleft_states[10])
-                        self.yvel=30
-            if self.stick and not attack:
-                if self.facer:
-                    if self.yvel<-4:
-                        self.clip(self.upright_states[0])
-                    elif self.yvel<4:
-                        self.clip(self.upright_states[1])
-                    elif self.yvel<12:
-                        self.clip(self.upright_states[2])
-                    elif self.yvel<20:
-                        self.clip(self.upright_states[3])
-                    if self.yvel>30:
-                        self.yvel=30
-                if self.facel:
-                    if self.yvel<-4:
-                        self.clip(self.upleft_states[0])
-                    elif self.yvel<4:
-                        self.clip(self.upleft_states[1])
-                    elif self.yvel<12:
-                        self.clip(self.upleft_states[2])
-                    elif self.yvel<20:
-                        self.clip(self.upleft_states[3])
-                    if self.yvel>30:
-                        self.yvel=30
+            
+            if self.yvel<-4:
+                self.clip(self.upright_states[0])
+            elif self.yvel<-1:
+                self.clip(self.upright_states[1])
+            elif self.yvel<2:
+                self.clip(self.upright_states[2])
+            elif self.yvel<4:
+                self.clip(self.upright_states[3])
+            elif self.yvel<7:
+                self.clip(self.upright_states[4])
+            elif self.yvel<10:
+                self.clip(self.upright_states[5])
+            elif self.yvel<12:
+                self.clip(self.upright_states[6])
+            elif self.yvel<13:
+                self.clip(self.upright_states[7])
+            elif self.yvel<20:
+                self.clip(self.upright_states[7])
+            elif self.yvel<23:
+                self.clip(self.upright_states[8])
+            if self.yvel>30:
+                self.clip(self.upright_states[10])
+                self.yvel=30
                 
         if not (right or left):
             self.xvel=0
         if self.onGround and self.xvel==0 and not attack:
-            if self.facer:
-                self.clip(self.right_states[0])
-            elif self.facel:
-                self.clip(self.left_states[0])
-        if self.rect.y==self.alt-10:
-            self.onGround=True
+            self.clip(self.right_states[0])
         self.rect.x+=self.xvel
         self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
@@ -496,56 +342,41 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         
+    def reset(self,x,y):
+        self.x = x
+        self.y = y
+
+        self.rect.center = (self.x, self.y,attack)
+        
     def muerte_proyectil(self, enemigo):
-        if pygame.sprite.collide_rect(self, enemigo.proyectil):
-            global vivo
-            vivo = False
+        if pygame.sprite.collide_rect(self, enemigo.proyectil): 
+            self.vivo = False
             self.image = pygame.image.load("Images/Others/vacio.png")
     
     def muerte_toque(self, enemigo):
         if pygame.sprite.collide_rect(self, enemigo):
-            global vivo
-            vivo = False
+            self.vivo = False
             self.image = pygame.image.load("Images/Others/vacio.png")
             
     def muerte_oil(self, oils):
         for o in oils:
             if pygame.sprite.collide_rect(self, o):
-                global vivo
-                vivo = False
-                self.image = pygame.image.load("Images/Others/vacio.png")
-    def muerte_water(self, wat):
-        for w in wat:
-            if pygame.sprite.collide_rect(self, w):
-                global vivo
-                vivo = False
+                self.vivo = False
                 self.image = pygame.image.load("Images/Others/vacio.png")
 
     def collide(self, xvel, yvel, platforms,attack):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
                 if isinstance(p, Platform) and not attack:
-                    if self.facer:
-                        self.clip(self.right_states[0])
-                    elif self.facel:
-                        self.clip(self.left_states[0])
+                    self.clip(self.right_states[0])
                     self.choque=True
                 elif isinstance(p, Platform) and attack:
-                    if self.facer:
-                        self.clip(self.attackright_states[0])
-                    elif self.facel:
-                        self.clip(self.attackleft_states[0])
+                    self.clip(self.attackright_states[0])
                     self.choque=True
                 if isinstance(p, Water) and not attack:
-                    if self.facer:
-                        self.clip(self.right_states[0])
-                    elif self.facel:
-                        self.clip(self.left_states[0])
+                    self.clip(self.right_states[0])
                 elif isinstance(p, Water) and attack:
-                    if self.facer:
-                        self.clip(self.attackright_states[0])
-                    elif self.facel:
-                        self.clip(self.attackleft_states[0])
+                    self.clip(self.attackright_states[0])
                 if xvel > 0:
                     self.rect.right = p.rect.left
                 if xvel < 0:
@@ -692,12 +523,10 @@ def main(resolution,sprites):
 
     while True:
         
-        time=clock.tick(30)
-
+        time=clock.tick(60)
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
-                pygame.quit()
                 sys.exit()
         if fondo1.rect.right>=0:
             fondo1.mov(player,key,time,fondo2,resolution)
@@ -724,7 +553,6 @@ def main(resolution,sprites):
             
         player.attacking = False
         player.muerte_oil(oils)
-        player.muerte_water(wat)
         
         player.handle_event(key,platforms)
         camera.update(player,resolution)
@@ -735,11 +563,9 @@ def main(resolution,sprites):
         screen.blit(fondo3.image,(fondo3.rect.left,fondo3.rect.top))
         for e in entities:
             screen.blit(e.image, camera.apply(e))
-        if vivo==False:
-            pass
-        if burbuja==False:
-            return True
+     
         pygame.display.flip()
-
-        
+        clock.tick(30)
     return 0
+
+
