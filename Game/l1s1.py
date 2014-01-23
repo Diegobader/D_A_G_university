@@ -93,6 +93,7 @@ class Burbuja(pygame.sprite.Sprite):
             vx, vy = self.velocidad(pj) 
 
             if pygame.sprite.spritecollideany(self, platforms):
+                self.rect.centery -= self.speed
                 self.speed *= -1
                 self.rect.centery += self.speed
 
@@ -144,7 +145,7 @@ class Proyectil(pygame.sprite.Sprite):
             self.rect.centery += vy*self.speed
             if pygame.sprite.spritecollideany(self, platforms):
                 self.desaparicion(burbuja)
-            if pygame.sprite.spritecollideany(self, platforms):
+            if pygame.sprite.spritecollideany(self, oils):
                 self.desaparicion(burbuja)
             if not burbuja.vivo or self.rect.left <= 0 or self.rect.top <= 0 or self.rect.bottom >= resolution[1]:
                 self.desaparicion(burbuja)
