@@ -351,22 +351,15 @@ class PJ(Entity,pygame.sprite.Sprite):
                                3:(96,95,28,40),
                                4:(123,95,34,40),
                                5:(157,95,34,40)}
-            ###
-            self.upleft_states={10:(274,452,39,60),
-                               9:(320,452,39,60),
-                               8:(362,452,39,60),
-                               7:(410,452,39,60),
-                               6:(454,452,37,60),
-                               5:(492,452,39,60),
-                               4:(534,452,39,60),
-                               3:(570,452,39,60),
-                               2:(602,452,39,60),
-                               1:(640,452,39,60),
-                               0:(683,452,39,60)}
+            self.upleft_states={3:(696,203,36,40),
+                               2:(730,203,40,40),
+                               1:(771,203,34,40),
+                               0:(810,203,34,40)}
             self.upright_states={0:(235,203,37,41),
                                1:(272,203,37,41),
                                2:(312,203,37,41),
                                3:(352,203,37,41)}
+            ###
             self.attackleft_states={#0:(305,586,39,60),1:(350,586,39,60),2:(393,586,39,60),3:(430,586,39,60),4:(470,586,39,60),
                                3:(510,586,50,60),
                                4:(510,586,50,60),
@@ -542,7 +535,6 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.yvel=30
             if self.man and not attack:
                 if self.facer:
-                    
                     if self.yvel<-15:
                         self.clip(self.upright_states[0])
                     elif self.yvel<10:
@@ -553,15 +545,17 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.clip(self.upright_states[3])
                     if self.yvel>30:
                         self.yvel=30
-                #if self.facel:
-                 #   if self.yvel<-4:
-                  #      self.clip(self.upleft_states[0])
-                   # elif self.yvel<4:
-                    #    self.clip(self.upleft_states[1])
-                 #   elif self.yvel<12:
-                  #      self.clip(self.upleft_states[2])
-                   # elif self.yvel<20:
-                    #    self.clip(self.upleft_states[3])
+                if self.facel:
+                    if self.yvel<-15:
+                        self.clip(self.upleft_states[0])
+                    elif self.yvel<10:
+                        self.clip(self.upleft_states[1])
+                    elif self.yvel<25:
+                        self.clip(self.upleft_states[2])
+                    elif self.yvel<30:
+                        self.clip(self.upleft_states[3])
+                    if self.yvel>30:
+                        self.yvel=30
                     if self.yvel>30:
                         self.yvel=30
                 
