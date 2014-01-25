@@ -1,6 +1,6 @@
 import pygame, sys, random, math
 from pygame.locals import *
-largo=260
+largo=50
 ancho=2075
 
 

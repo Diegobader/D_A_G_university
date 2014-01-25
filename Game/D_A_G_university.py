@@ -48,5 +48,5 @@ def game(vidas,resolution): #Hace correr los codigos
     else:
         pygame.quit()
 
-game(3,(500,300))
+game(3,(500,500))
 
