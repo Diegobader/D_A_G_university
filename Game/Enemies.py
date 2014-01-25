@@ -27,22 +27,22 @@ class Melee(pygame.sprite.Sprite):
             self.image = pygame.image.load('Images/Others/vacio.png')
             
 class Proyectil(pygame.sprite.Sprite):
-    def __init__(self,enemigo, imagen, speed):
+    def __init__(self,enemigo, speed):
         pygame.sprite.Sprite.__init__(self)
         self.wait = True
-        self.image = pygame.image.load('Images/Others/vacio.gif')
-        self.rect = Rect(enemigo.rect.centerx, enemigo.rect.centery, 30,30)
+        self.image = pygame.image.load('Images/Others/bb_p.png')
+        self.rect = self.image.get_rect()
+        self.image = pygame.image.load('Images/Others/vacio.png')
         self.rect.centerx = enemigo.rect.centerx
         self.rect.centery = enemigo.rect.centery
         self.speed = speed
-        self.imagen = imagen
 
     def update(self, pj, time, enemigo, vx, vy,resolution, *colisionables):
         if self.wait:
             self.rect.centery = enemigo.rect.centery
             self.rect.centerx = enemigo.rect.centerx
         if not self.wait:
-            self.image = pygame.image.load(self.imagen)
+            self.image = pygame.image.load( 'Images/Others/bb_p.png')
             self.rect.centerx += vx*self.speed
             self.rect.centery += vy*self.speed
             for c in colisionables:
@@ -51,9 +51,9 @@ class Proyectil(pygame.sprite.Sprite):
             if not enemigo.vivo or self.rect.left <= 0 or self.rect.top <= 0 or self.rect.bottom >= resolution[1]:
                 self.desaparicion(enemigo)
     
-    def desaparicion(self, distancia):
+    def desaparicion(self, enemigo):
         self.wait = True
-        self.image = pygame.image.load("Images/Others/vacio.gif")
+        self.image = pygame.image.load("Images/Others/vacio.png")
         
 class Distancia(pygame.sprite.Sprite):
     def __init__(self, posx, posy, image, speed):
@@ -64,12 +64,12 @@ class Distancia(pygame.sprite.Sprite):
         self.rect.centery = posy
         self.vivo = True
         self.speed = speed
-        self.proyectil = Proyectil(self, 'Images/Others/bb_p.png', 10)
+        self.proyectil = Proyectil(self, 10)
                 
     def update(self, pj, time,resolution, *colisionables):
         """Movimiento de Personaje y colisiones"""
         if self.vivo:
-            r = randint(0,1)
+            r = randint(0,2)
             if r == 1 and self.proyectil.wait:
                 self.proyectil.wait = False 
             vx, vy = self.velocidad(pj) 
@@ -80,12 +80,12 @@ class Distancia(pygame.sprite.Sprite):
                     self.speed *= -1
                     self.rect.centery += self.speed
                     
-            self.proyectil.update(pj, time, self, vx, vy, resolution, colisionables) 
-
-            self.rect.centery += self.speed
-            
             if pygame.sprite.collide_rect(pj, self) and pj.attacking:
                 self.muerte()
+                    
+            self.proyectil.update(pj, time, self, vx, vy, resolution, *colisionables) 
+
+            self.rect.centery += self.speed
     
     def velocidad(self, pj):
         x1 = pj.rect.centerx - self.rect.centerx

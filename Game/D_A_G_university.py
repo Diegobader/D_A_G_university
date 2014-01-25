@@ -51,13 +51,12 @@ def game(vidas,resolution): #Hace correr los codigos
     Character(1,1,character)   #para seleccionar vestimenta de personaje
     pygame.mixer.music.load("Music/Shower.mp3")
     pygame.mixer.music.play(-1)
-    if l1s1.main(resolution,Character(1,1,character))==True:
+    if l1s1.main(vidas, resolution,Character(1,1,character))==True:
         if l1s2.main(resolution,Character(1,1,character))==True:
-            self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/menu_chafa.png').convert(), self.resolution),(0,0))
+            l1s2.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/menu_chafa.png').convert(), self.resolution),(0,0))
         else:
             pygame.quit()
     else:
         pygame.quit()
-
-game(3,(500,300))
+game(3,(640,480))
 
