@@ -63,7 +63,7 @@ def complex_camera(camera, target_rect,resolution):
 ####################################################################################
       
 class PJ(Entity,pygame.sprite.Sprite):
-    def __init__(self, position,sprites, vidas):
+    def __init__(self, position,sprites):
         Entity.__init__(self)
         self.sheet = pygame.image.load(sprites)
         self.sheet.set_clip(pygame.Rect(6, 52, 30, 50))
@@ -85,7 +85,6 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.alt=position[1]
         self.atupright=False
         self.atupleft=False
-        self.vidas = vidas
         self.x_inicial = position[0]
         self.y_inicial = position[1]
         if sprites=='Images/Woman/1_1.png':
@@ -523,8 +522,7 @@ class PJ(Entity,pygame.sprite.Sprite):
 
     def muerte_etapa(self, *mortales):
         for m in mortales:
-            if pygame.sprite.spritecollide(self, m, False) and m.vivo:
-                self.vidas -= 1
+            if pygame.sprite.spritecollide(self, m, False):
                 self.rect.centerx = self.x_inicial
                 self.rect.centery = self.y_inicial
     
@@ -532,13 +530,11 @@ class PJ(Entity,pygame.sprite.Sprite):
         for m in mortales:
             for enemigo in m:
                 if pygame.sprite.collide_rect(self, enemigo) and enemigo.vivo:
-                    self.vidas -= 1
                     self.rect.centerx = self.x_inicial
                     self.rect.centery = self.y_inicial
     
     def muerte_proyectil(self, proyectil):
         if pygame.sprite.collide_rect(self, proyectil):
-                self.vidas -= 1
                 self.rect.centerx = self.x_inicial
                 self.rect.centery = self.y_inicial
     
@@ -617,9 +613,10 @@ def texto(texto, posx, posy, color=(255, 255, 255)):
     return salida, salida_rect
     
 #####################################################################   
-
-def main(vidas, resolution,sprites):
-
+score=2000
+def main(resolution,sprites):
+    
+    global score
     fondo='Images/Others/fondo1.png' 
     screen = pygame.display.set_mode(resolution)
     clock = pygame.time.Clock()
@@ -661,7 +658,7 @@ def main(vidas, resolution,sprites):
                 wat.append(w)
                 entities.add(w)
             if col == "1":
-                player = PJ((x,y),sprites, vidas)
+                player = PJ((x,y),sprites)
                                 
             x += 18
         y += 18
@@ -672,7 +669,7 @@ def main(vidas, resolution,sprites):
     entities.add(player)
 
 
-    while player.vidas > 0:
+    while True:
         
         time=clock.tick(60)
         
@@ -701,14 +698,16 @@ def main(vidas, resolution,sprites):
             player.muerte_proyectil(b.proyectil)
         for s in slimes:
             s.update(player, time, platforms)
-
+            if s.vivo==False:
+                slimes.remove(s)
+                score+=250
 #############################################################
 
         player.muerte_enemigo(slimes, burbujas)
         player.muerte_etapa(oils)
 
 #############################################################        
-                        
+        score-=1                    
         player.handle_event(key,platforms)
         camera.update(player,resolution)
         background=pygame.image.load(fondo).convert()
