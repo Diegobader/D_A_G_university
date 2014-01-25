@@ -78,7 +78,7 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.stick=False
         self.man=False
         self.onGround=False
-        self.attacking = False
+        self.attack = False
         self.frame = 0
         self.facel=False
         self.facer=True
@@ -268,7 +268,6 @@ class PJ(Entity,pygame.sprite.Sprite):
                 self.clip(self.attackright_states)
             elif self.facel:
                 self.clip(self.attackleft_states)
-            self.attacking = True
             if not self.onGround:
                 if right or self.facer:
                     self.atupright=True
@@ -522,12 +521,20 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
 
-    def muerte(self, *mortales):
+    def muerte_etapa(self, *mortales):
         for m in mortales:
-            if pygame.sprite.spritecollide(self, m, False):
+            if pygame.sprite.spritecollide(self, m, False) and m.vivo:
                 self.vidas -= 1
                 self.rect.centerx = self.x_inicial
                 self.rect.centery = self.y_inicial
+    
+    def muerte_enemigo(self, *mortales):
+        for m in mortales:
+            for enemigo in m:
+                if pygame.sprite.collide_rect(self, enemigo) and enemigo.vivo:
+                    self.vidas -= 1
+                    self.rect.centerx = self.x_inicial
+                    self.rect.centery = self.y_inicial
     
     def muerte_proyectil(self, proyectil):
         if pygame.sprite.collide_rect(self, proyectil):
@@ -562,7 +569,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     self.rect.top = p.rect.bottom
                     self.yvel = 0        
         
-    def handle_event(self,key,platforms, *mortales):
+    def handle_event(self,key,platforms):
         right=up=left=attack=False
         pygame.event.set_blocked(pygame.MOUSEMOTION)
 
@@ -576,7 +583,6 @@ class PJ(Entity,pygame.sprite.Sprite):
             attack=True
 
         self.update(up,right,left,attack,platforms)
-        self.muerte(*mortales)
 
 #############################################################################
     
@@ -669,7 +675,7 @@ def main(vidas, resolution,sprites):
     while player.vidas > 0:
         
         time=clock.tick(60)
-
+        
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
@@ -689,17 +695,21 @@ def main(vidas, resolution,sprites):
             fondo3.mov(player,key,time,fondo1,resolution)
         if fondo3.rect.right<=0:
             fondo3.rect.left=fondo2.rect.right
-
-        player.handle_event(key,platforms, oils, slimes, burbujas)
-
+        
         for b in burbujas:
             b.update(player, time, resolution, platforms)
             player.muerte_proyectil(b.proyectil)
         for s in slimes:
             s.update(player, time, platforms)
-        
-        player.attacking = False
-                
+
+#############################################################
+
+        player.muerte_enemigo(slimes, burbujas)
+        player.muerte_etapa(oils)
+
+#############################################################        
+                        
+        player.handle_event(key,platforms)
         camera.update(player,resolution)
         background=pygame.image.load(fondo).convert()
         screen.blit(background,(0,0))
