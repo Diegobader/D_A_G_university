@@ -1,5 +1,7 @@
 import pygame, sys, random, math
 from pygame.locals import *
+largo=260
+ancho=2075
 
 
 #############################################################################
@@ -47,6 +49,7 @@ class Camera(object):
         self.camera_func = camera_func
         self.state = Rect(0, 0, resolution[0], resolution[1])
 
+
     def apply(self, target):
         return target.rect.move(self.state.topleft)
 
@@ -63,10 +66,11 @@ def complex_camera(camera, target_rect,resolution):
     _, _, w, h = camera
     l, t, _, _ = -l+(resolution[0]/2), -t+resolution[1]/2, w, h
 
+
     l = min(0, l)                           # stop scrolling at the left edge
-    l = max(-(camera.width-resolution[0]), l)   # stop scrolling at the right edge
+    l = max(-ancho, l)   # stop scrolling at the right edge
     t = max(-(camera.height-resolution[1]), t) # stop scrolling at the bottom
-    t = min(0, t)                           # stop scrolling at the top
+    t = max(t, -largo)                           # stop scrolling at the top
     return Rect(l, t, w, h)
 
 ##################################################################################
@@ -403,13 +407,13 @@ class PJ(Entity,pygame.sprite.Sprite):
         if attack:
             if self.facer:
                 self.clip(self.attackright_states)
-            elif self.facel:
+            if self.facel:
                 self.clip(self.attackleft_states)
             self.attacking = True
             if not self.onGround:
                 if right or self.facer:
                     self.atupright=True
-                elif left or self.facel:
+                if left or self.facel:
                     self.atupleft=True
 ################################################################################
 ########################### gravedad inicio salto#############################
@@ -420,7 +424,7 @@ class PJ(Entity,pygame.sprite.Sprite):
             if attack and not self.onGround:
                 if right or self.facer:
                     self.atupright=True
-                elif left or self.facel:
+                if left or self.facel:
                     self.atupleft=True
 ################################################################################
 ############################## right/left on ground##############################                
@@ -782,20 +786,10 @@ def velocidad(pj, burbuja):
     y2 = y1/norm
     return x2, y2
 
-###############################################################################
-
-def texto(texto, posx, posy, color=(255, 255, 255)):
-    fuente = pygame.font.Font("Images/Others/times.ttf", 25)
-    salida = pygame.font.Font.render(fuente, texto, 1, color)
-    salida_rect = salida.get_rect()
-    salida_rect.centerx = posx
-    salida_rect.centery = posy
-    return salida, salida_rect
-    
 #####################################################################   
-
+score=2000
 def main(resolution,sprites):
-
+    global score
     fondo='Images/Others/fondo1.png' 
     screen = pygame.display.set_mode(resolution)
     clock = pygame.time.Clock()
@@ -856,7 +850,6 @@ def main(resolution,sprites):
     while True:
         
         time=clock.tick(30)
-
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
@@ -884,7 +877,11 @@ def main(resolution,sprites):
         for s in slimes:
             s.update(player, time, platforms, oils)
             player.muerte_toque(s)
-            
+            if s.vivo==False:
+                slimes.remove(s)
+                score+=250
+                
+        score-=1    
         player.attacking = False
         player.muerte_oil(oils)
         player.muerte_water(wat)
@@ -896,12 +893,20 @@ def main(resolution,sprites):
         screen.blit(fondo1.image,(fondo1.rect.left,fondo1.rect.top))
         screen.blit(fondo2.image,(fondo2.rect.left,fondo2.rect.top))
         screen.blit(fondo3.image,(fondo3.rect.left,fondo3.rect.top))
+
         for e in entities:
             screen.blit(e.image, camera.apply(e))
+
         if vivo==False:
             pass
         if burbuja==False:
             return True
+        
+        
+        
+        myfont = pygame.font.SysFont("monospace", 20, bold=True)
+        label = myfont.render("Score:"+str(score), 1, (0,0,0))
+        screen.blit(label, (380, 10))
         pygame.display.flip()
 
         
