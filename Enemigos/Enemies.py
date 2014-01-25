@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 from random import randint
 from math import sqrt
 
@@ -26,16 +27,16 @@ class Melee(pygame.sprite.Sprite):
             self.image = pygame.image.load('Images/Others/vacio.png')
             
 class Proyectil(pygame.sprite.Sprite):
-    def __init__(self,distancia, image, speed):
+    def __init__(self,enemigo, imagen, speed):
         pygame.sprite.Sprite.__init__(self)
         self.wait = True
-        self.image = pygame.image.load('Images/Others/vacio.png')
-        self.rect = self.image.get_rect()
-        self.rect.centerx = distancia.rect.centerx
-        self.rect.centery = distancia.rect.centery
+        self.image = pygame.image.load('Images/Others/vacio.gif')
+        self.rect = Rect(enemigo.rect.centerx, enemigo.rect.centery, 30,30)
+        self.rect.centerx = enemigo.rect.centerx
+        self.rect.centery = enemigo.rect.centery
         self.speed = speed
-        self.imagen = image
-        
+        self.imagen = imagen
+
     def update(self, pj, time, enemigo, vx, vy,resolution, *colisionables):
         if self.wait:
             self.rect.centery = enemigo.rect.centery
@@ -52,7 +53,7 @@ class Proyectil(pygame.sprite.Sprite):
     
     def desaparicion(self, distancia):
         self.wait = True
-        self.image = pygame.image.load("Images/Others/vacio.png")
+        self.image = pygame.image.load("Images/Others/vacio.gif")
         
 class Distancia(pygame.sprite.Sprite):
     def __init__(self, posx, posy, image, speed):

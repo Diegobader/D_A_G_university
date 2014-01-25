@@ -53,7 +53,7 @@ def game(vidas,resolution): #Hace correr los codigos
     pygame.mixer.music.play(-1)
     if l1s1.main(resolution,Character(1,1,character))==True:
         if l1s2.main(resolution,Character(1,1,character))==True:
-            self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/menu_chafa.png').convert(), self.resolution),(0,0))
+            screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/menu_chafa.png').convert(), self.resolution),(0,0))
         else:
             pygame.quit()
     else:
