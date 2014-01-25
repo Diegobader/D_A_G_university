@@ -223,6 +223,8 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.facel=False
         self.facer=True
         self.alt=position[1]
+        self.atupright=False
+        self.atupleft=False
         if sprites=='Images/Woman/1_1.png':
             self.woman=True
         elif sprites=='Images/Sticks/1_1.png':
@@ -259,16 +261,16 @@ class PJ(Entity,pygame.sprite.Sprite):
                                      #1: (1160, 372, 60, 53),2: (1100, 372, 60, 53),
                                      1: (1040, 372, 60, 53),
                                      2: (984, 372, 60, 53)}
-            self.atupright_states={#0:(2,485,60,53),
-                                   #1:(72,485,60,53),
-                                   #2:(130,483,60,53),
-                                   #3:(180,483,32,53),
-                                   0:(222,485,57,53)}
-            self.atupleft_states={#0:(1232,485,57,53),
-                                   #1:(72,485,60,53),
-                                   #1:(1157,485,57,53),
-                                   #3:(1063,483,32,53),
-                                   0:(1002,485,57,53)}
+            self.atupright_states={0:(2,485,60,53),
+                                   1:(72,485,60,53),
+                                   2:(130,485,60,53),
+                                   3:(180,485,32,53),
+                                   4:(222,485,57,53)}
+            self.atupleft_states={0:(1232,485,57,53),
+                                   1:(1157,485,60,53),
+                                   2:(1063,485,57,53),
+                                   3:(1020,485,32,53),
+                                   4:(1002,485,57,53)}
 ################################# woman ########################################
         elif self.woman:
             self.left_states={ 5:(518,203,39,60),
@@ -319,23 +321,22 @@ class PJ(Entity,pygame.sprite.Sprite):
                                3:(895,586,50,60),
                                4:(895,586,50,60)}
                                #6:(945,586,45,60),7:(985,586,39,60),8:(653,586,39,60),9:(1025,586,39,60)}
-            self.atupleft_states={6:(348,522,39,60),
-                               5:(394,522,39,60),
-                               4:(436,522,39,60),
-                               #4:(480,522,39,60),
+            self.atupleft_states={7:(348,522,39,60),
+                               6:(394,522,39,60),
+                               5:(436,522,39,60),
+                               4:(480,522,39,60),
                                3:(524,522,49,60),
-                               2:(524,522,49,60),
-                               1:(581,522,45,60),
-                               #1:(635,522,45,60),
+                               2:(581,522,45,60),
+                               1:(635,522,45,60),
                                0:(685,522,39,60)}
             self.atupright_states={0:(732,522,39,60),
-                               #1:(777,522,40,60),
-                               1:(830,522,45,60),
-                               2:(880,522,49,60),
+                               1:(777,522,40,60),
+                               2:(830,522,45,60),
                                3:(880,522,49,60),
-                               #4:(980,522,39,60),
-                               4:(1023,522,39,60),
-                               5:(1067,522,39,60)}
+                               4:(933,522,39,60),
+                               5:(980,522,39,60),
+                               6:(1023,522,39,60),
+                               7:(1067,522,39,60)}
             
 ####################################   man  #######################################
         elif self.man:
@@ -359,38 +360,26 @@ class PJ(Entity,pygame.sprite.Sprite):
                                1:(272,203,37,41),
                                2:(312,203,37,41),
                                3:(352,203,37,41)}
-            ###
-            self.attackleft_states={#0:(305,586,39,60),1:(350,586,39,60),2:(393,586,39,60),3:(430,586,39,60),4:(470,586,39,60),
-                               3:(510,586,50,60),
-                               4:(510,586,50,60),
-                               #6:(565,586,45,60),
-                               2:(611,586,39,60),
-                               1:(653,586,39,60),
-                               0:(690,586,39,60)}
-            self.attackright_states={0:(725,586,39,60),
-                               1:(763,586,39,60),
-                               2:(763,586,39,60),
-                               #3:(803,586,39,60),4:(847,586,39,60),
-                               3:(895,586,50,60),
-                               4:(895,586,50,60)}
-                               #6:(945,586,45,60),7:(985,586,39,60),8:(653,586,39,60),9:(1025,586,39,60)}
-            self.atupleft_states={6:(348,522,39,60),
-                               5:(394,522,39,60),
-                               4:(436,522,39,60),
-                               #4:(480,522,39,60),
-                               3:(524,522,49,60),
-                               2:(524,522,49,60),
-                               1:(581,522,45,60),
-                               #1:(635,522,45,60),
-                               0:(685,522,39,60)}
-            self.atupright_states={0:(732,522,39,60),
-                               #1:(777,522,40,60),
-                               1:(830,522,45,60),
-                               2:(880,522,49,60),
-                               3:(880,522,49,60),
-                               #4:(980,522,39,60),
-                               4:(1023,522,39,60),
-                               5:(1067,522,39,60)}
+            self.attackleft_states={0:(725,544,37,41),
+                                    1:(686,544,37,41),
+                                    2:(640,544,37,41)}
+            self.attackright_states={0:(318,544,37,41),
+                               1:(356,544,37,41),
+                               2:(402,544,37,41)}
+            self.atupleft_states={0:(1020,1163,41,46),
+                               1:(979,1163,41,46),
+                               2:(933,1163,41,46),
+                               3:(890,1163,41,46),
+                               4:(846,1163,35,46),
+                               5:(808,1163,35,46),
+                               6:(770,1163,41,46)}
+            self.atupright_states={0:(19,1163,41,46),
+                               1:(61,1163,41,46),
+                               2:(107,1163,41,46),
+                               3:(153,1163,41,46),
+                               4:(200,1163,35,46),
+                               5:(235,1163,35,46),
+                               6:(270,1163,41,46)}
                 
 ###################################################################################            
         
@@ -419,9 +408,9 @@ class PJ(Entity,pygame.sprite.Sprite):
             self.attacking = True
             if not self.onGround:
                 if right or self.facer:
-                    self.clip(self.atupright_states)
+                    self.atupright=True
                 elif left or self.facel:
-                    self.clip(self.atupleft_states)
+                    self.atupleft=True
 ################################################################################
 ########################### gravedad inicio salto#############################
 
@@ -430,9 +419,9 @@ class PJ(Entity,pygame.sprite.Sprite):
                 self.yvel=-30
             if attack and not self.onGround:
                 if right or self.facer:
-                    self.clip(self.atupright_states)
+                    self.atupright=True
                 elif left or self.facel:
-                    self.clip(self.atupleft_states)
+                    self.atupleft=True
 ################################################################################
 ############################## right/left on ground##############################                
         if right and self.onGround:
@@ -445,7 +434,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                 if self.onGround:
                     self.clip(self.attackright_states)
                 if up:
-                    self.clip(self.atupleft_states)
+                    self.atupright=True
         if left and self.onGround:
             self.facer=False
             self.facel=True
@@ -456,7 +445,8 @@ class PJ(Entity,pygame.sprite.Sprite):
                 if self.onGround:
                     self.clip(self.attackleft_states)
                 if up:
-                    self.clip(self.atupleft_states)
+                    self.atupleft=True
+                    
 ################################################################################
 ################################################################################
         if not self.onGround:
@@ -558,7 +548,100 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.yvel=30
                     if self.yvel>30:
                         self.yvel=30
-                
+############################# atup man ###################################
+        if self.man:
+            if self.atupright:
+                if self.yvel<-20:
+                    self.clip(self.atupright_states[0])
+                elif self.yvel<-10:
+                    self.clip(self.atupright_states[1])
+                elif self.yvel<0:
+                    self.clip(self.atupright_states[2])
+                elif self.yvel<5:
+                    self.clip(self.atupright_states[3])
+                elif self.yvel<15:
+                    self.clip(self.atupright_states[4])
+                elif self.yvel<20:
+                    self.clip(self.atupright_states[5])
+                elif self.yvel<30:
+                    self.clip(self.atupright_states[6])
+            if self.atupleft:
+                if self.yvel<-20:
+                    self.clip(self.atupleft_states[0])
+                elif self.yvel<-10:
+                    self.clip(self.atupleft_states[1])
+                elif self.yvel<0:
+                    self.clip(self.atupleft_states[2])
+                elif self.yvel<5:
+                    self.clip(self.atupleft_states[3])
+                elif self.yvel<15:
+                    self.clip(self.atupleft_states[4])
+                elif self.yvel<20:
+                    self.clip(self.atupleft_states[5])
+                elif self.yvel<30:
+                    self.clip(self.atupleft_states[6])
+############################## atup stick ###############################
+        if self.stick:
+            if self.atupright:
+                if self.yvel<-10:
+                    self.clip(self.atupright_states[0])
+                elif self.yvel<5:
+                    self.clip(self.atupright_states[1])
+                elif self.yvel<15:
+                    self.clip(self.atupright_states[2])
+                elif self.yvel<20:
+                    self.clip(self.atupright_states[3])
+                elif self.yvel<30:
+                    self.clip(self.atupright_states[4])
+
+            if self.atupleft:
+                if self.yvel<-10:
+                    self.clip(self.atupleft_states[0])
+                elif self.yvel<5:
+                    self.clip(self.atupleft_states[1])
+                elif self.yvel<15:
+                    self.clip(self.atupleft_states[2])
+                elif self.yvel<20:
+                    self.clip(self.atupleft_states[3])
+                elif self.yvel<30:
+                    self.clip(self.atupleft_states[4])
+############################## atup woman ##############################
+        if self.woman:
+            if self.atupright:
+                if self.yvel<-20:
+                    self.clip(self.atupright_states[0])
+                elif self.yvel<-10:
+                    self.clip(self.atupright_states[1])
+                elif self.yvel<0:
+                    self.clip(self.atupright_states[2])
+                elif self.yvel<5:
+                    self.clip(self.atupright_states[3])
+                elif self.yvel<15:
+                    self.clip(self.atupright_states[4])
+                elif self.yvel<20:
+                    self.clip(self.atupright_states[5])
+                elif self.yvel<25:
+                    self.clip(self.atupright_states[6])
+                elif self.yvel<30:
+                    self.clip(self.atupright_states[7])
+            if self.atupleft:
+                if self.yvel<-20:
+                    self.clip(self.atupleft_states[0])
+                elif self.yvel<-10:
+                    self.clip(self.atupleft_states[1])
+                elif self.yvel<0:
+                    self.clip(self.atupleft_states[2])
+                elif self.yvel<5:
+                    self.clip(self.atupleft_states[3])
+                elif self.yvel<15:
+                    self.clip(self.atupleft_states[4])
+                elif self.yvel<20:
+                    self.clip(self.atupleft_states[5])
+                elif self.yvel<30:
+                    self.clip(self.atupleft_states[6])
+                elif self.yvel<30:
+                    self.clip(self.atupleft_states[7])
+#########################################################################
         if not (right or left):
             self.xvel=0
         if self.onGround and self.xvel==0 and not attack:
@@ -571,6 +654,8 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
         self.onGround=False
+        self.atupright=False
+        self.atupleft=False
         self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         
