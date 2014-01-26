@@ -1,7 +1,6 @@
 import pygame, sys, random, math
 from pygame.locals import *
-largo=50
-ancho=2075
+
 
 
 #############################################################################
@@ -65,7 +64,9 @@ def complex_camera(camera, target_rect,resolution):
     l, t, _, _ = target_rect
     _, _, w, h = camera
     l, t, _, _ = -l+(resolution[0]/2), -t+resolution[1]/2, w, h
-
+    largo=-resolution[1]+550
+    
+    ancho=2075
 
     l = min(0, l)                           # stop scrolling at the left edge
     l = max(-ancho, l)   # stop scrolling at the right edge
@@ -218,6 +219,8 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.yvel=0
         global vivo
         vivo=True
+        global lives
+        lives=4
         self.woman=False
         self.stick=False
         self.man=False
@@ -662,6 +665,9 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.atupleft=False
         self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
+        if vivo==False:
+            self.rect.x=20
+            self.rect.y=200
         
     def muerte_proyectil(self, enemigo):
         if pygame.sprite.collide_rect(self, enemigo.proyectil):
@@ -790,6 +796,8 @@ def velocidad(pj, burbuja):
 score=2000
 def main(resolution,sprites):
     global score
+    global vivo
+    global lives
     fondo='Images/Others/fondo1.png' 
     screen = pygame.display.set_mode(resolution)
     clock = pygame.time.Clock()
@@ -837,10 +845,13 @@ def main(resolution,sprites):
                 entities.add(v)
             if col == "1":
                 player = PJ((x,y),sprites)
+                xini=x
+                yini=y
                 
             x += 18
         y += 18
         x = 0
+    
     total_level_width  = len(level[0])*35
     total_level_height = len(level)*35
     camera = Camera(complex_camera, (total_level_width, total_level_height))
@@ -880,7 +891,7 @@ def main(resolution,sprites):
             if s.vivo==False:
                 slimes.remove(s)
                 score+=250
-                
+        heart=rezize('Images/Others/heart.png',(resolution[0]*1/27,resolution[1]*1/27))       
         score-=1    
         player.attacking = False
         player.muerte_oil(oils)
@@ -896,17 +907,18 @@ def main(resolution,sprites):
 
         for e in entities:
             screen.blit(e.image, camera.apply(e))
-
         if vivo==False:
-            pass
+            lives-=1
+            vivo=True
+        
         if burbuja==False:
             return True
-        
-        
-        
         myfont = pygame.font.SysFont("monospace", 20, bold=True)
         label = myfont.render("Score:"+str(score), 1, (0,0,0))
+        life = myfont.render("x"+str(lives),1,(0,0,0))
         screen.blit(label, (380, 10))
+        screen.blit(heart,(20,14))
+        screen.blit(life,(40,10))
         pygame.display.flip()
 
         
