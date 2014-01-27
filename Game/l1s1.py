@@ -539,7 +539,7 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         if vivo==False:
             self.rect.x=20
-            self.rect.y=200
+            self.rect.y=450
         
     def muerte_proyectil(self, enemigo):
         if pygame.sprite.collide_rect(self, enemigo.proyectil):
@@ -712,6 +712,10 @@ def main(resolution,sprites):
                 player = PJ((x,y),sprites)
                 xini=x
                 yini=y
+            if col== "h":
+                love= vidas(x,y,resolution)
+                he.append(love)
+                entities.add(love)
 
                 
             x += 18

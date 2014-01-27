@@ -7,14 +7,14 @@ p                                                                               
 p                                                                                                                                             p
 p                                                                                                                                             p
 p                                                                                                                                             p
-p                                                                                                                                             p
+p                                                                   s      s                                                                  p
 p                                                               ppppppppppppppppp                                                             p
 p                                                                                    pp   pp                                                  p
-p                                                                                                 pppppppp                                    p
+p                                                                                                 pppppppp           h       s                p
 p                                                         p                                                p      pppppppppppppp              p
 p                                                                                                                                             p
 p                                                                                                                                             p
-p                                                                                                                                             p
+p                          h                                                                                                                  p
 p                       pppppppppp    p    pppppppppppp                                                                                       p
 p                                                                                                              p                              p
 p                                                                                                                                             p
@@ -26,6 +26,6 @@ p               ppp                                 p    s   p                  
 p                                                   pppppppppp                                       ppppppppp                                p
 p                                                                                        p          pppppppppp                                p
 p                                                                                                  ppppppppppp                                p
-p      h  ppp         p     s         ppp      ppp                s    p   p    s      p          pppppppppppp      p           b p           p
+p         ppp         p     s         ppp      ppp                s    p   p    s      p          pppppppppppp      p           b p           p
 pppppppppppppppppoooooppppppppppppppppppppoooooppppppppppppppppppppppppppoopppppppppppppoooooooopppppppppppppppppoooooppppppppppppppppppppppppp
 ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
