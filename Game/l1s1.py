@@ -818,8 +818,16 @@ def main(resolution,sprites):
     fondo3=Fondo('Images/Others/fondo3.png',fondo2.rect.right,0,resolution)
     titbk=pygame.image.load('Images/Others/titbk.png')
     heart=rezize('Images/Others/heart.png',(resolution[0]*1/25,resolution[1]*1/25))       
-    clear=pygame.image.load('Images/Others/clear.png')
-    end=pygame.image.load('Images/Others/end.png')
+    clear=rezize('Images/Others/clear.png',(resolution[0]/2,resolution[1]/7))
+    end=rezize('Images/Others/end.png',(resolution[0]/2,resolution[1]/3))
+    dibox=rezize('Images/Others/dibox.png',(resolution[0],resolution[1]/4))
+    presstocont=rezize('Images/Others/presstocont.png',(resolution[0]/10,resolution[1]/9))
+    if sprites=='Images/Woman/1_1.png':
+        character=rezize('Images/Others/Tia.png',(resolution[0]/5,resolution[1]/5))
+    elif sprites=='Images/Man/1_1.png':
+        character=rezize('Images/Others/Zatch.png',(resolution[0]/5,resolution[1]/5))
+    elif sprites=='Images/Sticks/1_1.png':
+        character=rezize('Images/Others/Stick.png',(resolution[0]/5,resolution[1]/5))
     x=y=0
     f= file("Maps/1_1.txt")
     level = f.readlines()
@@ -877,8 +885,8 @@ def main(resolution,sprites):
     total_level_height = len(level)*35
     camera = Camera(complex_camera, (total_level_width, total_level_height))
     entities.add(player)
-
-
+     
+    lardialogo=0
     while True:
         
         time=clock.tick(30)
@@ -942,10 +950,16 @@ def main(resolution,sprites):
             vivo=True
         if burbuja==False:
             return True
-            screen.blit(clear,(resolution[0]*1/4,resolution[1]*1/2))
+            screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
+            screen.blit(clear,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/14))
+            pygame.display.flip()
+            pygame.time.delay(2000)
             break
         if lives==0:
-            screen.blit(end,(resolution[0]*1/4,resolution[1]*1/3))
+            screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
+            screen.blit(end,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/6))
+            pygame.display.flip()
+            pygame.time.delay(2000)
             break
         
         myfont = pygame.font.SysFont("monospace", resolution[1]/20, bold=True)
@@ -957,6 +971,27 @@ def main(resolution,sprites):
         screen.blit(heart,(resolution[1]/30,resolution[1]/38))
         screen.blit(life,(resolution[1]/10,resolution[1]/38))
         pygame.display.flip()
-
+        while lardialogo<2:
+            if lardialogo==0:
+                screen.blit(dibox,(0,3*(resolution[1]/4)))
+                screen.blit(character,(resolution[0]/20,resolution[1]-19*(resolution[1]/80)))
+                screen.blit(myfont.render('texto linea 1',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/100)))
+                screen.blit(myfont.render('texto linea 2',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/120)))
+                screen.blit(myfont.render('texto linea 3',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/140)))
+                screen.blit(myfont.render('texto linea 4',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/220)))
+                screen.blit(presstocont,(8*(resolution[0]/9),8*(resolution[1]/9)))
+            elif lardialogo==1:
+                screen.blit(dibox,(0,3*(resolution[1]/4)))
+                screen.blit(character,(resolution[0]/20,resolution[1]-19*(resolution[1]/80)))
+                screen.blit(myfont.render('texto linea 5',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/100)))
+                screen.blit(myfont.render('texto linea 6',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/120)))
+                screen.blit(myfont.render('texto linea 7',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/140)))
+                screen.blit(myfont.render('texto linea 8',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/220)))
+                screen.blit(presstocont,(8*(resolution[0]/9),8*(resolution[1]/9)))
+            for event in pygame.event.get():    
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    lardialogo+=1
+            pygame.display.flip()
+            dialogo=False
         
     return 0

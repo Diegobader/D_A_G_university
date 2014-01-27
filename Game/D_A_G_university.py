@@ -1,6 +1,6 @@
 import pygame, sys
 import Menu
-import l1s1,l1s2
+import l1s1
 def Map(level,stage): #Elige mapa de acuerdo a nivel
     return 'Maps/'+str(level)+'_'+str(stage)+'.txt'
 def Fondo(level,stage):
@@ -34,10 +34,8 @@ def game(resolution): #Hace correr los codigos
     pygame.mixer.music.load("Music/Shower.mp3")
     pygame.mixer.music.play(-1)
     if l1s1.main(resolution,Character(1,1,character))==True:
-        if l1s2.main(resolution,Character(1,1,character))==True:
-            self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/menu_chafa.png').convert(), self.resolution),(0,0))
-        else:
-            pygame.quit()
+        screen.blit(clear,(resolution[0]*1/4,resolution[1]*1/2))
+        pygame.time.delay(2000)
     else:
         pygame.quit()
 
