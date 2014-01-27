@@ -121,7 +121,6 @@ class Burbuja(pygame.sprite.Sprite):
                 self.muerte()
                 global burbuja
                 burbuja=False
-                print(burbuja)
     
     def velocidad(self, pj):
         x1 = pj.rect.centerx - self.rect.centerx
@@ -792,7 +791,20 @@ def velocidad(pj, burbuja):
     y2 = y1/norm
     return x2, y2
 
-#####################################################################   
+#####################################################################
+
+class vidas(pygame.sprite.Sprite):
+    def __init__(self,posx,posy,resolution):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=rezize('Images/Others/heart.png',(resolution[0]*1/27,resolution[1]*1/27))
+        self.rect=Rect(posx,posy-5,20,20)
+        self.exist=True
+    def update(self,pj,platforms):
+        if pygame.sprite.collide_rect(pj, self):
+            self.image=pygame.image.load('Images/Others/vacio.png')
+            self.exist=False
+        
+################################################################################
 score=2000
 def main(resolution,sprites):
     global score
@@ -804,7 +816,6 @@ def main(resolution,sprites):
     fondo1=Fondo('Images/Others/fondo1.png',0,0,resolution)
     fondo2=Fondo('Images/Others/fondo2.png',fondo1.rect.right,0,resolution)
     fondo3=Fondo('Images/Others/fondo3.png',fondo2.rect.right,0,resolution)
-    
     x=y=0
     f= file("Maps/1_1.txt")
     level = f.readlines()
@@ -814,6 +825,7 @@ def main(resolution,sprites):
     oils = []
     val=[]
     wat=[]
+    he=[]
     
     entities=pygame.sprite.Group()
     for row in level:
@@ -827,6 +839,10 @@ def main(resolution,sprites):
                 burbujas.append(b)
                 entities.add(b)
                 entities.add(b.proyectil)
+            if col== "h":
+                love= vidas(x,y,resolution)
+                he.append(love)
+                entities.add(love)
             if col =="s":
                 s = Slime(x,y)
                 slimes.append(s)
@@ -847,6 +863,7 @@ def main(resolution,sprites):
                 player = PJ((x,y),sprites)
                 xini=x
                 yini=y
+
                 
             x += 18
         y += 18
@@ -885,17 +902,29 @@ def main(resolution,sprites):
             b.update(player, time, platforms, oils,resolution)
             player.muerte_proyectil(b)
             player.muerte_toque(b)
+            if b.vivo==False:
+                burbujas.remove(b)
+                score+=500
         for s in slimes:
             s.update(player, time, platforms, oils)
             player.muerte_toque(s)
             if s.vivo==False:
                 slimes.remove(s)
                 score+=250
+        for love in he:
+            love.update(player,platforms)
+            if love.exist==False:
+                he.remove(love)
+                lives+=1
+            
         heart=rezize('Images/Others/heart.png',(resolution[0]*1/27,resolution[1]*1/27))       
+        clear=pygame.image.load('Images/Others/clear.png')
+        end=pygame.image.load('Images/Others/end.png')
         score-=1    
         player.attacking = False
         player.muerte_oil(oils)
         player.muerte_water(wat)
+        
         
         player.handle_event(key,platforms)
         camera.update(player,resolution)
@@ -909,10 +938,15 @@ def main(resolution,sprites):
             screen.blit(e.image, camera.apply(e))
         if vivo==False:
             lives-=1
+            score-=200
             vivo=True
-        
         if burbuja==False:
-            return True
+            screen.blit(clear,(resolution[0]*1/4,resolution[1]*1/2))
+            break
+        if lives==0:
+            screen.blit(end,(resolution[0]*1/4,resolution[1]*1/3))
+            break
+        
         myfont = pygame.font.SysFont("monospace", 20, bold=True)
         label = myfont.render("Score:"+str(score), 1, (0,0,0))
         life = myfont.render("x"+str(lives),1,(0,0,0))
