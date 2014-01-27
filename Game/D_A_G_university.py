@@ -1,6 +1,20 @@
 import pygame, sys
 import Menu
 import l1s1
+
+#############Clase para el launcher###########
+class Start:
+    
+    def __init__(self):
+        pass
+    def Go(self,ArcadeServiceInterface):
+        try:
+            return 0
+        except Exception:
+            return -1
+###############################################
+
+
 def Map(level,stage): #Elige mapa de acuerdo a nivel
     return 'Maps/'+str(level)+'_'+str(stage)+'.txt'
 def Fondo(level,stage):

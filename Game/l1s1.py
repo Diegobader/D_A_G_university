@@ -1,5 +1,6 @@
 import pygame, sys, random, math
 from pygame.locals import *
+from Enemies import *
 
 
 
@@ -17,9 +18,9 @@ class Entity(pygame.sprite.Sprite):
 ############################################################################
 
 class Platform(Entity):
-    def __init__(self, x, y):
+    def __init__(self, x, y, image):
         Entity.__init__(self)
-        self.image = pygame.image.load("Images/Others/v.png")
+        self.image = pygame.image.load(image)
         self.image.convert()
         self.rect = Rect(x, y, 18, 18)
     def update(self):
@@ -76,134 +77,6 @@ def complex_camera(camera, target_rect,resolution):
 
 ##################################################################################
 
-class Burbuja(pygame.sprite.Sprite):
-    def __init__(self, posx, posy, resolution):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('Images/Others/bb_1.png')
-        self.rect =  Rect(posx, posy, 70, 66)
-        self.rect.centerx = posx
-        self.rect.centery = posy
-        self.vivo = True
-        self.speed = 3
-        self.proyectil = Proyectil(self)
-        global burbuja
-        burbuja=True
-        
-    def update(self, pj, time, platforms,oils,resolution):
-        """Movimiento de Personaje y colisiones"""
-        if self.vivo:
-            #if self.rect.top <= 0:
-            #    self.rect.top = 0
-            #    self.speed *= -1 
-            #if self.rect.bottom >= resolution[1]:
-            #    self.rect.bottom = resolution[1]
-            #    self.speed *= -1 
-            r = random.randint(0,1)
-            if r == 1 and self.proyectil.wait:
-                self.proyectil.wait = False 
-            vx, vy = self.velocidad(pj) 
-
-            for p in platforms:
-                if pygame.sprite.collide_rect(self, p):
-                    self.speed *= -1
-                    self.rect.centery += self.speed
-
-            for o in oils:
-                if pygame.sprite.collide_circle(self, o):
-                    self.speed *= -1
-                    self.rect.centery += self.speed
-                    
-            self.proyectil.update(pj, time, self, vx, vy, platforms, oils,resolution) 
-
-            self.rect.centery += self.speed
-            
-            if pygame.sprite.collide_rect(pj, self) and pj.attacking:
-                self.muerte()
-                global burbuja
-                burbuja=False
-    
-    def velocidad(self, pj):
-        x1 = pj.rect.centerx - self.rect.centerx
-        y1 = pj.rect.centery - self.rect.centery
-        norm = math.sqrt(x1**2 + y1**2)
-        x2 = x1/norm
-        y2 = y1/norm
-        return x2, y2
-    
-    def muerte(self):
-        self.vivo = False
-        self.image = pygame.image.load('Images/Others/vacio.png')
-
-#########################################################################
-     
-class Proyectil(pygame.sprite.Sprite):
-    def __init__(self,burbuja):
-        pygame.sprite.Sprite.__init__(self)
-        self.wait = True
-        self.image = pygame.image.load('Images/Others/vacio.png')
-        self.rect = Rect(burbuja.rect.centerx, burbuja.rect.centery, 30, 28)
-        self.rect.centerx = burbuja.rect.centerx
-        self.rect.centery = burbuja.rect.centery
-        self.speed = 10
-        
-    def update(self, pj, time, burbuja, vx, vy,platforms,oils,resolution):
-        if self.wait:
-            self.rect.centery = burbuja.rect.centery
-            self.rect.centerx = burbuja.rect.centerx
-        if not self.wait:
-            self.image = pygame.image.load('Images/Others/bb_p.png')
-            self.rect.centerx += vx*self.speed
-            self.rect.centery += vy*self.speed
-            for p in platforms:
-                if pygame.sprite.collide_rect(self, p):
-                    self.desaparicion(burbuja)
-            for o in oils:
-                if pygame.sprite.collide_rect(self, o):
-                    self.desaparicion(burbuja)
-            if not burbuja.vivo or self.rect.left <= 0 or self.rect.top <= 0 or self.rect.bottom >= resolution[1]:
-                self.desaparicion(burbuja)
-    
-    def desaparicion(self, burbuja):
-        self.wait = True
-        self.image = pygame.image.load("Images/Others/vacio.png")
-
-###################################################################################
-              
-class Slime(pygame.sprite.Sprite):
-    def __init__(self, posx, posy):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('Images/Others/slime.png')
-        self.rect = Rect(posx, posy, 39, 34)
-        self.rect.centerx = posx
-        self.rect.centery = posy
-        self.speed = 2
-        self.vivo = True
-        self.right = False
-        self.left = True
-    
-    def update(self, pj, time,platforms,oils):
-        if self.vivo:
-            #if pj.rect.centerx - self.rect.centerx > 0:
-            #    self.right = True
-            #    self.left = False
-            #if pj.rect.centerx - self.rect.centerx < 0:
-            #    self.left = True
-            #    self.right = False
-            for p in platforms:
-                if pygame.sprite.collide_rect(self,p):
-                    self.speed *= -1
-                    self.rect.centerx += self.speed
-            for o in oils:
-                if pygame.sprite.collide_rect(self, o):
-                    self.speed *= -1
-                    self.rect.centerx += self.speed
-            self.rect.centerx += self.speed
-            if pygame.sprite.collide_rect(pj, self) and pj.attacking:
-                self.muerte()
-    def muerte(self):
-            self.vivo = False
-            self.image = pygame.image.load('Images/Others/vacio.png')
-        
 ####################################################################################
       
 class PJ(Entity,pygame.sprite.Sprite):
@@ -675,20 +548,14 @@ class PJ(Entity,pygame.sprite.Sprite):
             self.image = pygame.image.load("Images/Others/vacio.png")
     
     def muerte_toque(self, enemigo):
-        if pygame.sprite.collide_rect(self, enemigo):
+        if pygame.sprite.collide_rect(self, enemigo) and enemigo.vivo:
             global vivo
             vivo = False
             self.image = pygame.image.load("Images/Others/vacio.png")
             
-    def muerte_oil(self, oils):
-        for o in oils:
-            if pygame.sprite.collide_rect(self, o):
-                global vivo
-                vivo = False
-                self.image = pygame.image.load("Images/Others/vacio.png")
-    def muerte_water(self, wat):
-        for w in wat:
-            if pygame.sprite.collide_rect(self, w):
+    def muerte_etapa(self, *colisionables):
+        for c in colisionables:
+            if pygame.sprite.spritecollideany(self, c):
                 global vivo
                 vivo = False
                 self.image = pygame.image.load("Images/Others/vacio.png")
@@ -746,31 +613,7 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.update(up,right,left,attack,platforms)
 
 #############################################################################
-    
-class Oil(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        self.image = pygame.image.load("Images/Others/oil.png")
-        self.image.convert()
-        self.rect = Rect(x, y, 18, 18)
-
-    def update(self):
-        pass
-    
-#############################################################################
-    
-class Valdosa(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        self.image = pygame.image.load("Images/Others/v.png")
-        self.image.convert()
-        self.rect = Rect(x, y, 18, 18)
-
-    def update(self):
-        pass
-    
-#############################################################################
-    
+        
 class Water(Entity):
     def __init__(self, x, y):
         Entity.__init__(self)
@@ -836,7 +679,6 @@ def main(resolution,sprites):
     burbujas = []
     slimes = []
     oils = []
-    val=[]
     wat=[]
     he=[]
     
@@ -844,34 +686,28 @@ def main(resolution,sprites):
     for row in level:
         for col in row:
             if col =="p":
-                p = Platform(x, y)
+                p = Platform(x,y, "Images/Others/v.png")
                 platforms.append(p)
                 entities.add(p)
             if col =="b":
-                b = Burbuja(x,y,resolution)
+                b = Distancia(x,y,'Images/Others/bb_1.png', 5)
                 burbujas.append(b)
                 entities.add(b)
                 entities.add(b.proyectil)
-            if col== "h":
-                love= vidas(x,y,resolution)
-                he.append(love)
-                entities.add(love)
+                global burbuja
+                burbuja = True
             if col =="s":
-                s = Slime(x,y)
+                s = Melee(x,y,'Images/Others/slime.png',3)
                 slimes.append(s)
                 entities.add(s)
             if col == "o":
-                o = Oil(x,y)
+                o = Platform(x,y, "Images/Others/oil.png")
                 oils.append(o)
                 entities.add(o)
             if col == "w":
                 w = Water(x,y)
                 wat.append(w)
                 entities.add(w)
-            if col == "v":
-                v = Valdosa(x,y)
-                val.append(v)
-                entities.add(v)
             if col == "1":
                 player = PJ((x,y),sprites)
                 xini=x
@@ -912,12 +748,13 @@ def main(resolution,sprites):
             fondo3.rect.left=fondo2.rect.right
 
         for b in burbujas:
-            b.update(player, time, platforms, oils,resolution)
+            b.update(player, time,resolution, platforms, oils)
             player.muerte_proyectil(b)
             player.muerte_toque(b)
             if b.vivo==False:
                 burbujas.remove(b)
                 score+=500
+                burbuja = False
         for s in slimes:
             s.update(player, time, platforms, oils)
             player.muerte_toque(s)
@@ -931,9 +768,7 @@ def main(resolution,sprites):
                 lives+=1   
         score-=1    
         player.attacking = False
-        player.muerte_oil(oils)
-        player.muerte_water(wat)
-        
+        player.muerte_etapa(oils, wat)        
         
         player.handle_event(key,platforms)
         camera.update(player,resolution)
