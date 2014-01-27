@@ -748,7 +748,7 @@ def main(resolution,sprites):
             fondo3.rect.left=fondo2.rect.right
 
         for b in burbujas:
-            b.update(player, time,resolution, platforms, oils)
+            b.update(player, time,resolution, key, platforms, oils)
             player.muerte_proyectil(b)
             player.muerte_toque(b)
             if b.vivo==False:
@@ -756,7 +756,7 @@ def main(resolution,sprites):
                 score+=500
                 burbuja = False
         for s in slimes:
-            s.update(player, time, platforms, oils)
+            s.update(player, time, key, platforms, oils)
             player.muerte_toque(s)
             if s.vivo==False:
                 slimes.remove(s)
