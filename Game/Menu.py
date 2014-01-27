@@ -1,7 +1,7 @@
 import pygame
 pygame.init()  
 class GameMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se deben agregar a la lista jiji
-    def __init__(self, screen, items,resolution, font_size, bg_color=(0,0,0), font=None,font_color_off=(255,255,255),font_color_on=(255,0,0)):
+    def __init__(self, screen,resolution, font_size, bg_color=(0,0,0), font=None,font_color_off=(255,255,255),font_color_on=(255,0,0)):
         self.resolution=resolution
         self.screen = screen
         self.scr_width = self.screen.get_rect().width

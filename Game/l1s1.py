@@ -816,6 +816,19 @@ def main(resolution,sprites):
     fondo1=Fondo('Images/Others/fondo1.png',0,0,resolution)
     fondo2=Fondo('Images/Others/fondo2.png',fondo1.rect.right,0,resolution)
     fondo3=Fondo('Images/Others/fondo3.png',fondo2.rect.right,0,resolution)
+    titbk=pygame.image.load('Images/Others/titbk.png')
+    heart=rezize('Images/Others/heart.png',(resolution[0]*1/25,resolution[1]*1/25))       
+    clear=rezize('Images/Others/clear.png',(resolution[0]/2,resolution[1]/7))
+    end=rezize('Images/Others/end.png',(resolution[0]/2,resolution[1]/3))
+    dibox=rezize('Images/Others/dibox2.png',(resolution[0],resolution[1]/4))
+    white=rezize('Images/Others/bed.png',(resolution[0],resolution[1]*3/4))
+    presstocont=rezize('Images/Others/presstocont.png',(resolution[0]/10,resolution[1]/9))
+    if sprites=='Images/Woman/1_1.png':
+        character=rezize('Images/Others/Tia.png',(resolution[0]/5,resolution[1]/5))
+    elif sprites=='Images/Man/1_1.png':
+        character=rezize('Images/Others/Zatch.png',(resolution[0]/5,resolution[1]/5))
+    elif sprites=='Images/Sticks/1_1.png':
+        character=rezize('Images/Others/Stick.png',(resolution[0]/5,resolution[1]/5))
     x=y=0
     f= file("Maps/1_1.txt")
     level = f.readlines()
@@ -873,8 +886,8 @@ def main(resolution,sprites):
     total_level_height = len(level)*35
     camera = Camera(complex_camera, (total_level_width, total_level_height))
     entities.add(player)
-
-
+     
+    lardialogo=0
     while True:
         
         time=clock.tick(30)
@@ -910,16 +923,12 @@ def main(resolution,sprites):
             player.muerte_toque(s)
             if s.vivo==False:
                 slimes.remove(s)
-                score+=250
+                score+=250       
         for love in he:
             love.update(player,platforms)
             if love.exist==False:
                 he.remove(love)
-                lives+=1
-            
-        heart=rezize('Images/Others/heart.png',(resolution[0]*1/27,resolution[1]*1/27))       
-        clear=pygame.image.load('Images/Others/clear.png')
-        end=pygame.image.load('Images/Others/end.png')
+                lives+=1   
         score-=1    
         player.attacking = False
         player.muerte_oil(oils)
@@ -941,19 +950,50 @@ def main(resolution,sprites):
             score-=200
             vivo=True
         if burbuja==False:
-            screen.blit(clear,(resolution[0]*1/4,resolution[1]*1/2))
+            return True
+            screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
+            screen.blit(clear,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/14))
+            pygame.display.flip()
+            pygame.time.delay(2000)
             break
         if lives==0:
-            screen.blit(end,(resolution[0]*1/4,resolution[1]*1/3))
+            screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
+            screen.blit(end,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/6))
+            pygame.display.flip()
+            pygame.time.delay(2000)
             break
         
-        myfont = pygame.font.SysFont("monospace", 20, bold=True)
+        myfont = pygame.font.SysFont("monospace", resolution[1]/20, bold=True)
         label = myfont.render("Score:"+str(score), 1, (0,0,0))
-        life = myfont.render("x"+str(lives),1,(0,0,0))
-        screen.blit(label, (380, 10))
-        screen.blit(heart,(20,14))
-        screen.blit(life,(40,10))
+        life = myfont.render('x'+str(lives),1,(0,0,0))
+        screen.blit(pygame.transform.scale(titbk.convert_alpha(), (resolution[1]/7,resolution[1]/15)),(resolution[0]/45,resolution[1]/50))
+        screen.blit(pygame.transform.scale(titbk.convert_alpha(), (5*(resolution[1]/12),resolution[1]/14)),(resolution[0]-8*(resolution[1]/19),resolution[1]/50))
+        screen.blit(label, (resolution[0]-8*(resolution[1]/20), resolution[1]/38))
+        screen.blit(heart,(resolution[1]/30,resolution[1]/38))
+        screen.blit(life,(resolution[1]/10,resolution[1]/38))
         pygame.display.flip()
-
+        while lardialogo<2:
+            if lardialogo==0:
+                screen.blit(white,(0,0))
+                screen.blit(dibox,(0,3*(resolution[1]/4)))
+                screen.blit(character,(resolution[0]/20,resolution[1]-19*(resolution[1]/80)))
+                screen.blit(myfont.render('...... Huh?!',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/100)))
+                screen.blit(myfont.render(' What hour is it?!?',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/120)))
+                screen.blit(myfont.render('I should already be in',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/140)))
+                screen.blit(myfont.render('my clases in the UC!',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/220)))
+                screen.blit(presstocont,(8*(resolution[0]/9),8*(resolution[1]/9)))
+            elif lardialogo==1:
+                screen.blit(dibox,(0,3*(resolution[1]/4)))
+                screen.blit(character,(resolution[0]/20,resolution[1]-19*(resolution[1]/80)))
+                screen.blit(myfont.render('Im so late!, i should',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/100)))
+                screen.blit(myfont.render('go take a shower...',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/120)))
+                screen.blit(myfont.render('I hope no enemies ',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/140)))
+                screen.blit(myfont.render('attack me in there...',1,(0,0,0)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/220)))
+                screen.blit(presstocont,(8*(resolution[0]/9),8*(resolution[1]/9)))
+            for event in pygame.event.get():    
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    lardialogo+=1
+            pygame.display.flip()
+            dialogo=False
         
     return 0
