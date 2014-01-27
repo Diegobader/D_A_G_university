@@ -665,7 +665,7 @@ def main(resolution,sprites):
     end=rezize('Images/Others/end.png',(resolution[0]/2,resolution[1]/3))
     dibox=rezize('Images/Others/dibox.png',(resolution[0],resolution[1]/4))
     white=rezize('Images/Others/bed.png',(resolution[0],resolution[1]*3/4))
-    presstocont=rezize('Images/Others/presstocont.png',(resolution[0]/10,resolution[1]/9))
+    presstocont=rezize('Images/Others/presstocont1.png',(resolution[0]/10,resolution[1]/9))
     if sprites=='Images/Woman/1_1.png':
         character=rezize('Images/Others/Tia.png',(resolution[0]/5,resolution[1]/5))
     elif sprites=='Images/Man/1_1.png':
