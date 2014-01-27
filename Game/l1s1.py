@@ -816,10 +816,10 @@ def main(resolution,sprites):
     fondo1=Fondo('Images/Others/fondo1.png',0,0,resolution)
     fondo2=Fondo('Images/Others/fondo2.png',fondo1.rect.right,0,resolution)
     fondo3=Fondo('Images/Others/fondo3.png',fondo2.rect.right,0,resolution)
-<<<<<<< HEAD
     titbk=pygame.image.load('Images/Others/titbk.png')
-=======
->>>>>>> master
+    heart=rezize('Images/Others/heart.png',(resolution[0]*1/25,resolution[1]*1/25))       
+    clear=pygame.image.load('Images/Others/clear.png')
+    end=pygame.image.load('Images/Others/end.png')
     x=y=0
     f= file("Maps/1_1.txt")
     level = f.readlines()
@@ -914,20 +914,12 @@ def main(resolution,sprites):
             player.muerte_toque(s)
             if s.vivo==False:
                 slimes.remove(s)
-                score+=250
-<<<<<<< HEAD
-        heart=rezize('Images/Others/heart.png',(resolution[0]/20,resolution[1]/20))       
-=======
+                score+=250       
         for love in he:
             love.update(player,platforms)
             if love.exist==False:
                 he.remove(love)
-                lives+=1
-            
-        heart=rezize('Images/Others/heart.png',(resolution[0]*1/27,resolution[1]*1/27))       
-        clear=pygame.image.load('Images/Others/clear.png')
-        end=pygame.image.load('Images/Others/end.png')
->>>>>>> master
+                lives+=1   
         score-=1    
         player.attacking = False
         player.muerte_oil(oils)
@@ -949,18 +941,14 @@ def main(resolution,sprites):
             score-=200
             vivo=True
         if burbuja==False:
-<<<<<<< HEAD
             return True
-        myfont = pygame.font.SysFont("monospace", resolution[1]/20, bold=True)
-=======
             screen.blit(clear,(resolution[0]*1/4,resolution[1]*1/2))
             break
         if lives==0:
             screen.blit(end,(resolution[0]*1/4,resolution[1]*1/3))
             break
         
-        myfont = pygame.font.SysFont("monospace", 20, bold=True)
->>>>>>> master
+        myfont = pygame.font.SysFont("monospace", resolution[1]/20, bold=True)
         label = myfont.render("Score:"+str(score), 1, (0,0,0))
         life = myfont.render('x'+str(lives),1,(0,0,0))
         screen.blit(pygame.transform.scale(titbk.convert_alpha(), (resolution[1]/7,resolution[1]/15)),(resolution[0]/45,resolution[1]/50))
