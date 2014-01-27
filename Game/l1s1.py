@@ -804,7 +804,7 @@ def main(resolution,sprites):
     fondo1=Fondo('Images/Others/fondo1.png',0,0,resolution)
     fondo2=Fondo('Images/Others/fondo2.png',fondo1.rect.right,0,resolution)
     fondo3=Fondo('Images/Others/fondo3.png',fondo2.rect.right,0,resolution)
-    
+    titbk=pygame.image.load('Images/Others/titbk.png')
     x=y=0
     f= file("Maps/1_1.txt")
     level = f.readlines()
@@ -891,7 +891,7 @@ def main(resolution,sprites):
             if s.vivo==False:
                 slimes.remove(s)
                 score+=250
-        heart=rezize('Images/Others/heart.png',(resolution[0]*1/27,resolution[1]*1/27))       
+        heart=rezize('Images/Others/heart.png',(resolution[0]/20,resolution[1]/20))       
         score-=1    
         player.attacking = False
         player.muerte_oil(oils)
@@ -913,12 +913,14 @@ def main(resolution,sprites):
         
         if burbuja==False:
             return True
-        myfont = pygame.font.SysFont("monospace", 20, bold=True)
+        myfont = pygame.font.SysFont("monospace", resolution[1]/20, bold=True)
         label = myfont.render("Score:"+str(score), 1, (0,0,0))
-        life = myfont.render("x"+str(lives),1,(0,0,0))
-        screen.blit(label, (380, 10))
-        screen.blit(heart,(20,14))
-        screen.blit(life,(40,10))
+        life = myfont.render('x'+str(lives),1,(0,0,0))
+        screen.blit(pygame.transform.scale(titbk.convert_alpha(), (resolution[1]/7,resolution[1]/15)),(resolution[0]/45,resolution[1]/50))
+        screen.blit(pygame.transform.scale(titbk.convert_alpha(), (5*(resolution[1]/12),resolution[1]/14)),(resolution[0]-8*(resolution[1]/19),resolution[1]/50))
+        screen.blit(label, (resolution[0]-8*(resolution[1]/20), resolution[1]/38))
+        screen.blit(heart,(resolution[1]/30,resolution[1]/38))
+        screen.blit(life,(resolution[1]/10,resolution[1]/38))
         pygame.display.flip()
 
         

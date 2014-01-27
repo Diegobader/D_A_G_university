@@ -17,22 +17,15 @@ def menu(resolution):    #Despliega menu que solo retorna valores de personje (d
     pygame.mixer.music.load("Music/Menu.mp3")
     pygame.mixer.music.play(-1)
     screen = pygame.display.set_mode(resolution, 0, 32) 
-    menu_items_1 = ('Start','Credits','Quit')
-    menu_items_2 = ('Woman','Man','Stick','Back')
+    menu_items_2 = ('Woman','Man','Stick','Quit')
     pygame.display.set_caption('D_A_G')
     while True:
-        gm1 = Menu.GameMenu(screen, menu_items_1,resolution, ((resolution[0])/10)).run()
-        if gm1==1:
-            pass
-        elif gm1==2:
-            pass
-        elif gm1==3:
-            pygame.quit()
-            sys.exit()
-            break
+        Menu.GameMenu(screen,resolution, ((resolution[0])/10)).run()
         gm2 = Menu.CharMenu(screen, menu_items_2,resolution, ((resolution[0])/10)).run()
         if gm2<len(menu_items_2):
             break
+        elif gm2==len(menu_items_2):
+            pygame.quit()
     return int(gm2)
 def game(vidas,resolution): #Hace correr los codigos
     pygame.init()
