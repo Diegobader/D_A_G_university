@@ -7,7 +7,7 @@ from Enemies import *
 #############################################################################
 
 def rezize(image,resolution):
-    return  pygame.transform.scale(pygame.image.load(image).convert(), resolution)
+    return  pygame.transform.scale(pygame.image.load(image).convert_alpha(), resolution)
 
 ###############################################################################
 
