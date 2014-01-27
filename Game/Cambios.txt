@@ -1,0 +1,5 @@
+1.- A D_A_G_university le agregue la clase para el launcher
+2.- En l1s1 borre las clases de enemigos, y creo el modulo enemigos en donde hay clases de enemigos mas genericas.
+3.- En l1s1 cargo los enemigos importando
+4.- Borre las clases oil y valdosa, para hacer una clase generica llamada platform. Sin embargo, deje la clase water ya que el player utiliza un global Water, y no se como cambiar eso
+5.- El global burbuja, se llama cuando empieza el ciclo y se vuelve falso cuando muere la burbuja
