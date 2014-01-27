@@ -918,6 +918,8 @@ def main(resolution,sprites):
                 lives+=1
             
         heart=rezize('Images/Others/heart.png',(resolution[0]*1/27,resolution[1]*1/27))       
+        clear=pygame.image.load('Images/Others/clear.png')
+        end=pygame.image.load('Images/Others/end.png')
         score-=1    
         player.attacking = False
         player.muerte_oil(oils)
@@ -939,7 +941,11 @@ def main(resolution,sprites):
             score-=200
             vivo=True
         if burbuja==False:
-            return True
+            screen.blit(clear,(resolution[0]*1/4,resolution[1]*1/2))
+            break
+        if lives==0:
+            screen.blit(end,(resolution[0]*1/4,resolution[1]*1/3))
+            break
         
         myfont = pygame.font.SysFont("monospace", 20, bold=True)
         label = myfont.render("Score:"+str(score), 1, (0,0,0))
