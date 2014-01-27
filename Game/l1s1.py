@@ -748,7 +748,7 @@ def main(resolution,sprites):
             fondo3.rect.left=fondo2.rect.right
 
         for b in burbujas:
-            b.update(player, time,resolution, key, platforms, oils)
+            b.update(player, time, key,resolution, platforms, oils)
             player.muerte_proyectil(b)
             player.muerte_toque(b)
             if b.vivo==False:

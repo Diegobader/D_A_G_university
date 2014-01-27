@@ -1,5 +1,4 @@
-import pygame, sys
-import Menu
+import pygame, sys, Menu
 import l1s1
 
 #############Clase para el launcher###########
@@ -48,7 +47,6 @@ def game(resolution): #Hace correr los codigos
     pygame.mixer.music.load("Music/Shower.mp3")
     pygame.mixer.music.play(-1)
     if l1s1.main(resolution,Character(1,1,character))==True:
-        screen.blit(clear,(resolution[0]*1/4,resolution[1]*1/2))
         pygame.time.delay(2000)
     else:
         pygame.quit()
