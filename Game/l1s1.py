@@ -649,10 +649,11 @@ class vidas(pygame.sprite.Sprite):
         
 ################################################################################
 score=2000
-def main(resolution,sprites):
+def Juego(resolution,sprites,nivel):
     global score
     global vivo
     global lives
+
     fondo='Images/Others/fondo1.png' 
     screen = pygame.display.set_mode(resolution)
     clock = pygame.time.Clock()
@@ -673,7 +674,7 @@ def main(resolution,sprites):
     elif sprites=='Images/Sticks/1_1.png':
         character=rezize('Images/Others/Stick.png',(resolution[0]/5,resolution[1]/5))
     x=y=0
-    f= file("Maps/1_1.txt")
+    f= file("Maps/lvl" + str(nivel) + ".txt")
     level = f.readlines()
     platforms=[]
     burbujas = []
@@ -789,11 +790,11 @@ def main(resolution,sprites):
             score-=200
             vivo=True
         if burbuja==False:
-            return True
             screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
             screen.blit(clear,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/14))
             pygame.display.flip()
             pygame.time.delay(2000)
+            return True
             break
         if lives==0:
             screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))

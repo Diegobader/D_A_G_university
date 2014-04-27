@@ -1,4 +1,5 @@
-import pygame, sys, Menu
+import sys, Menu
+import pygame
 import l1s1
 
 #############Clase para el launcher###########
@@ -46,10 +47,15 @@ def game(resolution): #Hace correr los codigos
     Character(1,1,character)   #para seleccionar vestimenta de personaje
     pygame.mixer.music.load("Music/Shower.mp3")
     pygame.mixer.music.play(-1)
-    if l1s1.main(resolution,Character(1,1,character))==True:
-        pygame.time.delay(2000)
-    else:
-        pygame.quit()
-
-game((500,500))
+    jugar = True
+    nivel = 1
+    while(jugar):
+        if l1s1.Juego(resolution,Character(1,1,character),nivel)==True:
+            pygame.time.delay(2000)
+            nivel += 1
+        else:
+            pygame.quit()
+def main():
+    game((500,500))
+if __name__ == '__main__': main()
 

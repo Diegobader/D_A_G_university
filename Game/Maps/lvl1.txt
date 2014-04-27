@@ -1,46 +1,31 @@
-p                                                               
-p                                                               
-p                                                               
-p                                                               
-p                                                               
-p                                                                   p
-p                                                                   
-p                                                          p        
-p                                           p   s    p  p           
-p      p   p  p   p    p    p   p   p   p   pppppppppp              
-p       oooooooooooooooooooooooooooooooooooooooooooooooooooooooop   b
-p    p                                                          p   
-p                                                               p   p
-p                                                               p
-pp                                                              p
-p                                                               p
-p                                                               p
-ppp                                                             p
-p                                                               p
-pppp                                                            p
-p                                       p   p   p   p   p       p
-p       p                                                       p
-p                       b                                       p
-p            pp    p      s      s    p                     ppppp
-poooooooooooooooooopppppppppppppppppppp                         p
-p                                                               p
-p                                            p   s    s    s    p
-p                                            pppppppppppppppppppp
-p                                                               p
-p                                                               p
-p                             p       s   p                     p                                                W
-p                             ppppppppppppp                     p                                                           W
-                           p                                    p                                              W
-                   ppppp                                        p                                             W
-          pppppp                                                p                                                     W
-                                                                p
-                                                                p    
-                                                                p
-   1              s                                             p   
-ppppppppppooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
-ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
-ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp    
-ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
-ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
-ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                              p    s      s  p                                                               p
+p                                                              pppppppppppppppppp                                                             p
+p                                                                                    pp   pp                                                  p
+p                                                                                                 pppppppp         p h       s p              p
+p                                                         p                                                p      pppppppppppppp              p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                          h               p     s    p                                                                                       p
+p                       pppppppppp    p    pppppppppppp                                                                                       p
+p                                                                                                              p                              p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                                                                                                             p
+p                                                                                                       pppppp                                p
+p  1                                                                pppppp                             ppppppp                                p
+p               ppp                                 p    s   p                                        pppppppp                                p
+p                                                   pppppppppp                                       ppppppppp                                p
+p                                                                                        p          pppppppppp                                p
+p                                                                                                  ppppppppppp                                p
+p         ppp         p     s         ppp      ppp                s    p   p    s      p          pppppppppppp      p           b p           p
+pppppppppppppppppoooooppppppppppppppppppppoooooppppppppppppppppppppppppppoopppppppppppppoooooooopppppppppppppppppoooooppppppppppppppppppppppppp
+ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
