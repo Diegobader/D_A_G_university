@@ -80,7 +80,7 @@ def complex_camera(camera, target_rect,resolution):
 ####################################################################################
       
 class PJ(Entity,pygame.sprite.Sprite):
-    def __init__(self, position,sprites):
+    def __init__(self, position,sprites, x_i, y_i, lives_):
         Entity.__init__(self)
         self.sheet = pygame.image.load(sprites)
         self.sheet.set_clip(pygame.Rect(6, 52, 30, 50))
@@ -89,10 +89,12 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.rect.topleft = position
         self.xvel=0
         self.yvel=0
+        self.xinicial = x_i
+        self.yinicial = y_i
         global vivo
         vivo=True
         global lives
-        lives=4
+        lives=lives_
         self.woman=False
         self.stick=False
         self.man=False
@@ -538,8 +540,8 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         if vivo==False:
-            self.rect.x=20
-            self.rect.y=450
+            self.rect.x= self.xinicial
+            self.rect.y= self.yinicial
         
     def muerte_proyectil(self, enemigo):
         if pygame.sprite.collide_rect(self, enemigo.proyectil):
@@ -649,23 +651,59 @@ class vidas(pygame.sprite.Sprite):
         
 ################################################################################
 score=2000
-def Juego(resolution,sprites,nivel):
+def Juego(resolution,sprites,nivel,lives):
     global score
     global vivo
-    global lives
 
-    fondo='Images/Others/fondo1.png' 
+    dialogos = file("Maps/lvl" + str(nivel) + "/dialogos.txt")
+    sprites_etapa = file("Maps/lvl" +str(nivel) + "/sprites_etapa.txt")
+    etapa = file("Maps/lvl" + str(nivel) + "/mapa.txt")
+    enemigos = file("Maps/lvl" + str(nivel) + "/enemigos.txt")
+    musica = file("Maps/lvl" + str(nivel) + "/musica.txt")
+    #Rutas sprites de etapa
+
+    fondo = sprites_etapa.readline()
+    fondo=fondo[:len(fondo)-1]
+
+    ruta_white = sprites_etapa.readline()
+    ruta_white = ruta_white[:len(ruta_white)-1]
+
+    ruta_platform = sprites_etapa.readline()
+    ruta_platform = ruta_platform[:len(ruta_platform)-1]
+
+    ruta_platform_muerte = sprites_etapa.readline()
+    ruta_platform_muerte = ruta_platform_muerte[:len(ruta_platform_muerte)-1]
+    
+    ruta_distancia = enemigos.readline()
+    ruta_distancia = ruta_distancia[:len(ruta_distancia)-1]
+
+    ruta_melee = enemigos.readline()
+    ruta_melee = ruta_melee[:len(ruta_melee)-1]
+
+    ruta_musica = musica.readline()
+    ruta_musica = ruta_musica[:len(ruta_musica)-1]
+
+
+    level = etapa.readlines()
+
+    etapa.close()
+    sprites_etapa.close()
+    enemigos.close()
+    musica.close()
+
+    #Cierre rutas sprites de etapa
+    pygame.mixer.music.load(ruta_musica)
+    pygame.mixer.music.play(-1)
+
     screen = pygame.display.set_mode(resolution)
     clock = pygame.time.Clock()
-    fondo1=Fondo('Images/Others/fondo1.png',0,0,resolution)
-    fondo2=Fondo('Images/Others/fondo2.png',fondo1.rect.right,0,resolution)
-    fondo3=Fondo('Images/Others/fondo3.png',fondo2.rect.right,0,resolution)
+    fondo1=Fondo(fondo,0,0,resolution)
     titbk=pygame.image.load('Images/Others/titbk.png')
     heart=rezize('Images/Others/heart.png',(resolution[0]*1/25,resolution[1]*1/25))       
     clear=rezize('Images/Others/clear.png',(resolution[0]/2,resolution[1]/7))
     end=rezize('Images/Others/end.png',(resolution[0]/2,resolution[1]/3))
     dibox=rezize('Images/Others/dibox.png',(resolution[0],resolution[1]/4))
-    white=rezize('Images/Others/bed.png',(resolution[0],resolution[1]*3/4))
+    white=rezize(ruta_white,(resolution[0],resolution[1]*3/4))
     presstocont=rezize('Images/Others/presstocont1.png',(resolution[0]/10,resolution[1]/9))
     if sprites=='Images/Woman/1_1.png':
         character=rezize('Images/Others/Tia.png',(resolution[0]/5,resolution[1]/5))
@@ -674,11 +712,9 @@ def Juego(resolution,sprites,nivel):
     elif sprites=='Images/Sticks/1_1.png':
         character=rezize('Images/Others/Stick.png',(resolution[0]/5,resolution[1]/5))
     x=y=0
-    f= file("Maps/lvl" + str(nivel) + ".txt")
-    level = f.readlines()
     platforms=[]
-    burbujas = []
-    slimes = []
+    distancia = []
+    melee = []
     oils = []
     wat=[]
     he=[]
@@ -687,30 +723,24 @@ def Juego(resolution,sprites,nivel):
     for row in level:
         for col in row:
             if col =="p":
-                p = Platform(x,y, "Images/Others/v.png")
+                p = Platform(x,y, ruta_platform)
                 platforms.append(p)
                 entities.add(p)
-            if col =="b":
-                b = Distancia(x,y,'Images/Others/bb_1.png', 5)
-                burbujas.append(b)
-                entities.add(b)
-                entities.add(b.proyectil)
-                global burbuja
-                burbuja = True
-            if col =="s":
-                s = Melee(x,y,'Images/Others/slime.png',3)
-                slimes.append(s)
-                entities.add(s)
+            if col =="d":
+                d = Distancia(x,y,ruta_distancia, 5)
+                distancia.append(d)
+                entities.add(d)
+                entities.add(d.proyectil)
+            if col =="m":
+                m = Melee(x,y,ruta_melee,3)
+                melee.append(m)
+                entities.add(m)
             if col == "o":
-                o = Platform(x,y, "Images/Others/oil.png")
+                o = Platform(x,y, ruta_platform_muerte)
                 oils.append(o)
                 entities.add(o)
-            if col == "w":
-                w = Water(x,y)
-                wat.append(w)
-                entities.add(w)
-            if col == "1":
-                player = PJ((x,y),sprites)
+            if col == "s":
+                player = PJ((x,y),sprites, x, y,lives)
                 xini=x
                 yini=y
             if col== "h":
@@ -727,7 +757,8 @@ def Juego(resolution,sprites,nivel):
     total_level_height = len(level)*35
     camera = Camera(complex_camera, (total_level_width, total_level_height))
     entities.add(player)
-     
+    
+    total_dialogos = dialogos.readline()
     lardialogo=0
     while True:
         
@@ -737,34 +768,18 @@ def Juego(resolution,sprites,nivel):
             if eventos.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        if fondo1.rect.right>=0:
-            fondo1.mov(player,key,time,fondo2,resolution)
-        if fondo1.rect.right<=0:
-            fondo1.rect.left=fondo3.rect.right
-
-        if fondo2.rect.right>=0:
-            fondo2.mov(player,key,time,fondo3,resolution)
-        if fondo2.rect.right<=0:
-            fondo2.rect.left=fondo1.rect.right
-
-        if fondo3.rect.right>=0:
-            fondo3.mov(player,key,time,fondo1,resolution)
-        if fondo3.rect.right<=0:
-            fondo3.rect.left=fondo2.rect.right
-
-        for b in burbujas:
-            b.update(player, time, key,resolution, platforms, oils)
-            player.muerte_proyectil(b)
-            player.muerte_toque(b)
-            if b.vivo==False:
-                burbujas.remove(b)
+        for d in distancia:
+            d.update(player, time, key,resolution, platforms, oils)
+            player.muerte_proyectil(d)
+            player.muerte_toque(d)
+            if d.vivo==False:
+                distancia.remove(d)
                 score+=500
-                burbuja = False
-        for s in slimes:
-            s.update(player, time, key, platforms, oils)
-            player.muerte_toque(s)
-            if s.vivo==False:
-                slimes.remove(s)
+        for m in melee:
+            m.update(player, time, key, platforms, oils)
+            player.muerte_toque(m)
+            if m.vivo==False:
+                melee.remove(m)
                 score+=250       
         for love in he:
             love.update(player,platforms)
@@ -780,8 +795,6 @@ def Juego(resolution,sprites,nivel):
         background=pygame.image.load(fondo).convert()
         screen.blit(background,(0,0))
         screen.blit(fondo1.image,(fondo1.rect.left,fondo1.rect.top))
-        screen.blit(fondo2.image,(fondo2.rect.left,fondo2.rect.top))
-        screen.blit(fondo3.image,(fondo3.rect.left,fondo3.rect.top))
 
         for e in entities:
             screen.blit(e.image, camera.apply(e))
@@ -789,13 +802,12 @@ def Juego(resolution,sprites,nivel):
             lives-=1
             score-=200
             vivo=True
-        if burbuja==False:
+        if (len(distancia) == 0 and len(melee) == 0):
             screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
             screen.blit(clear,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/14))
             pygame.display.flip()
             pygame.time.delay(2000)
             return True
-            break
         if lives==0:
             screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
             screen.blit(end,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/6))
@@ -812,28 +824,26 @@ def Juego(resolution,sprites,nivel):
         screen.blit(heart,(resolution[1]/30,resolution[1]/38))
         screen.blit(life,(resolution[1]/10,resolution[1]/38))
         pygame.display.flip()
-        while lardialogo<2:
-            if lardialogo==0:
-                screen.blit(white,(0,0))
-                screen.blit(dibox,(0,3*(resolution[1]/4)))
-                screen.blit(character,(resolution[0]/20,resolution[1]-19*(resolution[1]/80)))
-                screen.blit(myfont.render('...... Huh?!',1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/100)))
-                screen.blit(myfont.render(' What hour is it?!?',1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/120)))
-                screen.blit(myfont.render('I should already be in',1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/140)))
-                screen.blit(myfont.render('my clases in the UC!',1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/220)))
-                screen.blit(presstocont,(8*(resolution[0]/9),8*(resolution[1]/9)))
-            elif lardialogo==1:
-                screen.blit(dibox,(0,3*(resolution[1]/4)))
-                screen.blit(character,(resolution[0]/20,resolution[1]-19*(resolution[1]/80)))
-                screen.blit(myfont.render('Im so late!, i should',1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/100)))
-                screen.blit(myfont.render('go take a shower...',1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/120)))
-                screen.blit(myfont.render('I hope no enemies ',1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/140)))
-                screen.blit(myfont.render('attack me in there...',1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/220)))
-                screen.blit(presstocont,(8*(resolution[0]/9),8*(resolution[1]/9)))
-            for event in pygame.event.get():    
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    lardialogo+=1
+        while lardialogo<int(total_dialogos[0]):
+            screen.blit(white,(0,0))
+            screen.blit(dibox,(0,3*(resolution[1]/4)))
+            screen.blit(character,(resolution[0]/20,resolution[1]-19*(resolution[1]/80)))
+            pasar = False
+            for i in range(0,4):
+                if(i==3):
+                    screen.blit(myfont.render(dialogos.readline(),1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/220)))
+                else:
+                    screen.blit(myfont.render(dialogos.readline(),1,(225,225,225)),(resolution[0]/20+resolution[0]/4,resolution[1]-19*(resolution[1]/(100+20*i))))
+
             pygame.display.flip()
-            dialogo=False
+            while(pasar == False):
+                for event in pygame.event.get():    
+                    if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                        lardialogo+=1
+                        pasar = True
+                        if(lardialogo == int(total_dialogos[0])):
+                            dialogos.close()
+
+
         
     return 0

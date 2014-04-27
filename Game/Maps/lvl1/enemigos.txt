@@ -1,0 +1,2 @@
+Images/Others/bb_1.png
+Images/Others/slime.png

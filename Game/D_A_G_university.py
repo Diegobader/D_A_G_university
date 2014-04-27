@@ -1,6 +1,6 @@
 import sys, Menu
 import pygame
-import l1s1
+import Etapa
 
 #############Clase para el launcher###########
 class Start:
@@ -45,12 +45,12 @@ def game(resolution): #Hace correr los codigos
     pygame.init()
     character=menu(resolution)  #Para seleccionar personaje
     Character(1,1,character)   #para seleccionar vestimenta de personaje
-    pygame.mixer.music.load("Music/Shower.mp3")
-    pygame.mixer.music.play(-1)
     jugar = True
+
+    lives = [4]
     nivel = 1
     while(jugar):
-        if l1s1.Juego(resolution,Character(1,1,character),nivel)==True:
+        if Etapa.Juego(resolution,Character(1,1,character),nivel, lives[0])==True:
             pygame.time.delay(2000)
             nivel += 1
         else:

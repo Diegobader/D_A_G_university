@@ -1,0 +1,2 @@
+numero de cuadros que se mostraran
+(dialogo)

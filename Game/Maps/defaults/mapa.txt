@@ -1,0 +1,5 @@
+p: para plataforma
+o: para plataforma que mata
+m: para enemigo melee
+d: para enemigo distancia
+s: para punto de partida

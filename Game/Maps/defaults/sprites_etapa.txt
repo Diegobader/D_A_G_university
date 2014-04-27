@@ -1,0 +1,5 @@
+ruta imagen de fondo de la etapa
+ruta imagen de fondo de dialogo
+ruta imagen de plataforma
+ruta imagen de plataforma que mata
+(espacio)
