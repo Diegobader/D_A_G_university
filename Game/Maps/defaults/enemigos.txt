@@ -1,3 +1,7 @@
 ruta enemigo distancia
+velocidad distancia
+ruta proyectil
+velocidad proyectil
 ruta enemigo melee
+velocidad melee
 (espacio)
