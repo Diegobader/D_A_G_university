@@ -41,6 +41,7 @@ def menu(resolution):    #Despliega menu que solo retorna valores de personje (d
         elif gm2==len(menu_items_2):
             pygame.quit()
     return int(gm2)
+
 def game(resolution): #Hace correr los codigos
     pygame.init()
     character=menu(resolution)  #Para seleccionar personaje
@@ -55,6 +56,7 @@ def game(resolution): #Hace correr los codigos
             nivel += 1
         else:
             pygame.quit()
+
 def main():
     game((500,500))
 if __name__ == '__main__': main()

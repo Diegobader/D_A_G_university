@@ -676,9 +676,15 @@ def Juego(resolution,sprites,nivel,lives):
     
     ruta_distancia = enemigos.readline()
     ruta_distancia = ruta_distancia[:len(ruta_distancia)-1]
+    speed_distancia = int(enemigos.readline())   
+
+    ruta_proyectil = enemigos.readline()
+    ruta_proyectil = ruta_proyectil[:len(ruta_proyectil)-1]
+    speed_proyectil = int(enemigos.readline())
 
     ruta_melee = enemigos.readline()
     ruta_melee = ruta_melee[:len(ruta_melee)-1]
+    speed_melee = int(enemigos.readline())
 
     ruta_musica = musica.readline()
     ruta_musica = ruta_musica[:len(ruta_musica)-1]
@@ -727,12 +733,12 @@ def Juego(resolution,sprites,nivel,lives):
                 platforms.append(p)
                 entities.add(p)
             if col =="d":
-                d = Distancia(x,y,ruta_distancia, 5)
+                d = Distancia(x,y,ruta_distancia, speed_distancia, ruta_proyectil, speed_proyectil)
                 distancia.append(d)
                 entities.add(d)
                 entities.add(d.proyectil)
             if col =="m":
-                m = Melee(x,y,ruta_melee,3)
+                m = Melee(x,y,ruta_melee,speed_melee)
                 melee.append(m)
                 entities.add(m)
             if col == "o":

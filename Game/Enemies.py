@@ -27,10 +27,10 @@ class Melee(pygame.sprite.Sprite):
             self.image = pygame.image.load('Images/Others/vacio.png')
             
 class Proyectil(pygame.sprite.Sprite):
-    def __init__(self,enemigo, speed):
+    def __init__(self,enemigo, speed, ruta):
         pygame.sprite.Sprite.__init__(self)
         self.wait = True
-        self.image = pygame.image.load('Images/Others/bb_p.png')
+        self.image = pygame.image.load(ruta)
         self.rect = self.image.get_rect()
         self.image = pygame.image.load('Images/Others/vacio.png')
         self.rect.centerx = enemigo.rect.centerx
@@ -56,7 +56,7 @@ class Proyectil(pygame.sprite.Sprite):
         self.image = pygame.image.load("Images/Others/vacio.png")
         
 class Distancia(pygame.sprite.Sprite):
-    def __init__(self, posx, posy, image, speed):
+    def __init__(self, posx, posy, image, speed, ruta_proyectil, speed_proyectil):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(image)
         self.rect =  self.image.get_rect()
@@ -64,7 +64,7 @@ class Distancia(pygame.sprite.Sprite):
         self.rect.centery = posy
         self.vivo = True
         self.speed = speed
-        self.proyectil = Proyectil(self, 10)
+        self.proyectil = Proyectil(self, 10,ruta_proyectil)
                 
     def update(self, pj, time,key, resolution, *colisionables):
         """Movimiento de Personaje y colisiones"""
