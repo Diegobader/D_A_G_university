@@ -85,8 +85,6 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.sheet = pygame.image.load(sprites)
         self.sheet.set_clip(pygame.Rect(6, 52, 30, 50))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
-        self.rect = self.image.get_rect()
-        self.rect.topleft = position
         self.xvel=0
         self.yvel=0
         self.xinicial = x_i
@@ -112,6 +110,10 @@ class PJ(Entity,pygame.sprite.Sprite):
             self.stick=True
         elif sprites=='Images/Man/1_1.png':
             self.man=True
+            self.sheet.set_clip(pygame.Rect(6, 52, 30, 40))
+        self.image = self.sheet.subsurface(self.sheet.get_clip())
+        self.rect = self.image.get_rect()
+        self.rect.bottomright = position
 ################################### stick ######################################
         if self.stick:
             self.right_states={0: (6, 52, 30, 50),
@@ -284,38 +286,29 @@ class PJ(Entity,pygame.sprite.Sprite):
         if attack:
             if self.facer:
                 self.clip(self.attackright_states)
+            self.attacking = True
             if self.facel:
                 self.clip(self.attackleft_states)
             self.attacking = True
             if not self.onGround:
-                if right or self.facer:
-                    self.atupright=True
                 if left or self.facel:
                     self.atupleft=True
-################################################################################
-########################### gravedad inicio salto#############################
+                elif right or self.facer:
+                    self.atupright=True
 
+################################################################################
+########################### gravedad inicio salto##############################
         if up:
             if self.onGround:
                 self.yvel=-30
             if attack and not self.onGround:
-                if right or self.facer:
-                    self.atupright=True
                 if left or self.facel:
                     self.atupleft=True
+                if right or self.facer:
+                    self.atupright=True
+
 ################################################################################
 ############################## right/left on ground##############################                
-        if right and self.onGround:
-            self.facer=True
-            self.facel=False
-            if not attack:
-                self.clip(self.right_states)
-            self.xvel= 8
-            if attack:
-                if self.onGround:
-                    self.clip(self.attackright_states)
-                if up:
-                    self.atupright=True
         if left and self.onGround:
             self.facer=False
             self.facel=True
@@ -327,6 +320,18 @@ class PJ(Entity,pygame.sprite.Sprite):
                     self.clip(self.attackleft_states)
                 if up:
                     self.atupleft=True
+        if right and self.onGround:
+            self.facel=False
+            self.facer=True
+            if not attack:
+                self.clip(self.right_states)
+            self.xvel= 8
+            if attack:
+                if self.onGround:
+                    self.clip(self.attackright_states)
+                if up:
+                    self.atupright=True
+
                     
 ################################################################################
 ################################################################################
@@ -505,7 +510,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     self.clip(self.atupright_states[6])
                 elif self.yvel<30:
                     self.clip(self.atupright_states[7])
-            if self.atupleft:
+            elif self.atupleft:
                 if self.yvel<-20:
                     self.clip(self.atupleft_states[0])
                 elif self.yvel<-10:
@@ -570,13 +575,11 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.clip(self.right_states[0])
                     elif self.facel:
                         self.clip(self.left_states[0])
-                    self.choque=True
                 elif isinstance(p, Platform) and attack:
                     if self.facer:
                         self.clip(self.attackright_states[0])
                     elif self.facel:
                         self.clip(self.attackleft_states[0])
-                    self.choque=True
                 if isinstance(p, Water) and not attack:
                     if self.facer:
                         self.clip(self.right_states[0])
@@ -593,8 +596,8 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.rect.left = p.rect.right
                 if yvel > 0:
                     self.rect.bottom = p.rect.top
-                    self.onGround=True
                     self.yvel = 0
+                    self.onGround=True
                 if yvel < 0:
                     self.rect.top = p.rect.bottom
                     self.yvel = 0        
