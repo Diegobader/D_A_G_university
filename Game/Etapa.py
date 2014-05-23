@@ -93,6 +93,10 @@ class PJ(Entity,pygame.sprite.Sprite):
         vivo=True
         global lives
         lives=lives_
+        contat=1500
+        kup=True
+        global kup
+        global contat
         self.woman=False
         self.stick=False
         self.man=False
@@ -309,7 +313,7 @@ class PJ(Entity,pygame.sprite.Sprite):
 
 ################################################################################
 ############################## right/left on ground##############################                
-        if left and self.onGround:
+        if left :
             self.facer=False
             self.facel=True
             if not attack:
@@ -320,7 +324,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     self.clip(self.attackleft_states)
                 if up:
                     self.atupleft=True
-        if right and self.onGround:
+        if right :
             self.facel=False
             self.facer=True
             if not attack:
@@ -603,9 +607,10 @@ class PJ(Entity,pygame.sprite.Sprite):
                     self.yvel = 0        
         
     def handle_event(self,key,platforms):
+        global contat
+        global kup
         right=up=left=attack=False
         pygame.event.set_blocked(pygame.MOUSEMOTION)
-
         if key[pygame.K_RIGHT]:
             right=True
         if key[pygame.K_UP]:
@@ -613,8 +618,13 @@ class PJ(Entity,pygame.sprite.Sprite):
         if key[pygame.K_LEFT]:
             left=True
         if key[pygame.K_k]:
+            kup=6
+            if kup>5:
+                attack=False
+        if kup>0 and not key[pygame.K_k]:
+            kup=kup-1
+        if kup<=5 and kup>0:
             attack=True
-
         self.update(up,right,left,attack,platforms)
 
 #############################################################################
@@ -653,10 +663,33 @@ class vidas(pygame.sprite.Sprite):
             self.exist=False
         
 ################################################################################
-score=2000
-def Juego(resolution,sprites,nivel,lives):
-    global score
+
+def leaderboard(score):
+    rdfile=open("Puntajes.txt","r")
+    actuales=[]
+    for count in range(3):
+        actuales.append(rdfile.readline())
+        actuales[count]=int(actuales[count].replace("\n",""))
+    if score>=actuales[0]:
+        actuales=[score,actuales[0],actuales[1]]
+    elif score>=actuales[1] and score<=actuales[0]:
+        actuales=[actuales[0],score,actuales[1]]
+    elif score>=actuales[2] and score<=actuales[1]:
+        actuales=[actuales[0],actuales[1],score]
+    else:
+        pass
+    wrtfile=open("Puntajes.txt","w")
+    wrtfile.write(str(actuales[0])+"\n")
+    wrtfile.write(str(actuales[1])+"\n")
+    wrtfile.write(str(actuales[2])+"\n")
+    wrtfile.close()
+    return actuales
+
+################################################################################
+
+def Juego(resolution,sprites,nivel,lives,score):
     global vivo
+    global kup
 
     dialogos = file("Maps/lvl" + str(nivel) + "/dialogos.txt")
     sprites_etapa = file("Maps/lvl" +str(nivel) + "/sprites_etapa.txt")
@@ -711,6 +744,7 @@ def Juego(resolution,sprites,nivel,lives):
     heart=rezize('Images/Others/heart.png',(resolution[0]*1/25,resolution[1]*1/25))       
     clear=rezize('Images/Others/clear.png',(resolution[0]/2,resolution[1]/7))
     end=rezize('Images/Others/end.png',(resolution[0]/2,resolution[1]/3))
+    black=rezize('Images/Others/black.png',resolution)
     dibox=rezize('Images/Others/dibox.png',(resolution[0],resolution[1]/4))
     white=rezize(ruta_white,(resolution[0],resolution[1]*3/4))
     presstocont=rezize('Images/Others/presstocont1.png',(resolution[0]/10,resolution[1]/9))
@@ -727,7 +761,6 @@ def Juego(resolution,sprites,nivel,lives):
     oils = []
     wat=[]
     he=[]
-    
     entities=pygame.sprite.Group()
     for row in level:
         for col in row:
@@ -770,7 +803,6 @@ def Juego(resolution,sprites,nivel,lives):
     total_dialogos = dialogos.readline()
     lardialogo=0
     while True:
-        
         time=clock.tick(30)
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
@@ -778,23 +810,25 @@ def Juego(resolution,sprites,nivel,lives):
                 pygame.quit()
                 sys.exit()
         for d in distancia:
-            d.update(player, time, key,resolution, platforms, oils)
+            d.update(player, time, key,kup,resolution, platforms, oils)
             player.muerte_proyectil(d)
             player.muerte_toque(d)
             if d.vivo==False:
                 distancia.remove(d)
                 score+=500
+                return [True,lives,score]
         for m in melee:
-            m.update(player, time, key, platforms, oils)
+            m.update(player, time, key,kup, platforms, oils)
             player.muerte_toque(m)
             if m.vivo==False:
                 melee.remove(m)
-                score+=250       
+                score+=250
         for love in he:
             love.update(player,platforms)
             if love.exist==False:
                 he.remove(love)
-                lives+=1   
+                lives+=1
+                score+=100
         score-=1    
         player.attacking = False
         player.muerte_etapa(oils, wat)        
@@ -816,13 +850,23 @@ def Juego(resolution,sprites,nivel,lives):
             screen.blit(clear,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/14))
             pygame.display.flip()
             pygame.time.delay(2000)
-            return True
+            return [True,lives,score]
         if lives==0:
+            myfont = pygame.font.SysFont("monospace", resolution[1]/12, bold=True)
+            puntajes=leaderboard(score)
             screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
             screen.blit(end,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/6))
             pygame.display.flip()
             pygame.time.delay(2000)
-            break
+            screen.blit(black,(0,0))
+            screen.blit(myfont.render("Your Score is: "+str(score),1,(255,255,255)),(resolution[0]/6,resolution[1]/4))
+            screen.blit(myfont.render("The TOP 3 Scores are...",1,(255,255,255)),(resolution[0]/9,resolution[1]/2))
+            screen.blit(myfont.render("1.- "+str(puntajes[0]),1,(255,255,255)),(resolution[0]/5,7*resolution[1]/12))
+            screen.blit(myfont.render("2.- "+str(puntajes[1]),1,(255,255,255)),(resolution[0]/5,8*resolution[1]/12))
+            screen.blit(myfont.render("3.- "+str(puntajes[2]),1,(255,255,255)),(resolution[0]/5,9*resolution[1]/12))
+            pygame.display.flip()
+            pygame.time.delay(10000)
+            return [False,lives,score]
         
         myfont = pygame.font.SysFont("monospace", resolution[1]/20, bold=True)
         label = myfont.render("Score:"+str(score), 1, (0,0,0))
@@ -855,4 +899,4 @@ def Juego(resolution,sprites,nivel,lives):
 
 
         
-    return 0
+    return [True,lives,score]

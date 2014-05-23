@@ -43,21 +43,22 @@ def menu(resolution):    #Despliega menu que solo retorna valores de personje (d
     return int(gm2)
 
 def game(resolution): #Hace correr los codigos
-    pygame.init()
-    character=menu(resolution)  #Para seleccionar personaje
-    Character(1,1,character)   #para seleccionar vestimenta de personaje
-    jugar = True
-
-    lives = [4]
-    nivel = 1
-    while(jugar):
-        if Etapa.Juego(resolution,Character(1,1,character),nivel, lives[0])==True:
-            pygame.time.delay(2000)
-            nivel += 1
-        else:
-            pygame.quit()
+    while True:
+        pygame.init()
+        character=menu(resolution)  #Para seleccionar personaje
+        Character(1,1,character)   #para seleccionar vestimenta de personaje
+        lista=[True,4,2000]  #[estado de juego, vidas, score]
+        nivel=1
+        while(lista[0]):
+            lista= Etapa.Juego(resolution,Character(1,1,character),nivel, lista[1],lista[2])
+            if lista[0]==True:
+                pygame.time.delay(2000)
+                nivel += 1
+            else:
+                break
 
 def main():
-    game((500,500))
-if __name__ == '__main__': main()
+    game((1024,700))
+if __name__ == '__main__':
+    main()
 
