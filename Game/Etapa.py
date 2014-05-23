@@ -602,7 +602,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     self.rect.top = p.rect.bottom
                     self.yvel = 0        
         
-    def handle_event(self,key,platforms):
+    def handle_event(self,key,platforms,joystick):
         right=up=left=attack=False
         pygame.event.set_blocked(pygame.MOUSEMOTION)
         if self.attacking or self.tiempo_entre_attack > 0:
@@ -612,13 +612,13 @@ class PJ(Entity,pygame.sprite.Sprite):
         if self.tiempo_entre_attack >= 3000:
             self.tiempo_entre_attack = 0
 
-        if key[pygame.K_RIGHT]:
+        if key[pygame.K_RIGHT] or joystick.get_axis(0) >= 0.5:
             right=True
-        if key[pygame.K_UP]:
+        if key[pygame.K_UP]  or joystick.get_button(0) or joystick.get_axis(1) <= -0.5:
             up=True
-        if key[pygame.K_LEFT]:
+        if key[pygame.K_LEFT] or joystick.get_axis(0) <= -0.5:
             left=True
-        if key[pygame.K_k] and self.tiempo_entre_attack == 0:
+        if (key[pygame.K_k] or joystick.get_button(1)) and self.tiempo_entre_attack == 0:
             attack=True
 
         self.update(up,right,left,attack,platforms)
@@ -660,7 +660,7 @@ class vidas(pygame.sprite.Sprite):
         
 ################################################################################
 score=2000
-def Juego(resolution,sprites,nivel,lives):
+def Juego(resolution,sprites,nivel,lives, joystick):
     global score
     global vivo
 
@@ -669,6 +669,7 @@ def Juego(resolution,sprites,nivel,lives):
     etapa = file("Maps/lvl" + str(nivel) + "/mapa.txt")
     enemigos = file("Maps/lvl" + str(nivel) + "/enemigos.txt")
     musica = file("Maps/lvl" + str(nivel) + "/musica.txt")
+
     #Rutas sprites de etapa
 
     fondo = sprites_etapa.readline()
@@ -734,26 +735,27 @@ def Juego(resolution,sprites,nivel,lives):
     wat=[]
     he=[]
     
-    entities=pygame.sprite.Group()
+    entities_fijos = pygame.sprite.Group()
+    entities_dinamicos = pygame.sprite.Group()
     for row in level:
         for col in row:
             if col =="p":
                 p = Platform(x,y, ruta_platform)
                 platforms.append(p)
-                entities.add(p)
+                entities_fijos.add(p)
             if col =="d":
                 d = Distancia(x,y,ruta_distancia, speed_distancia, ruta_proyectil, speed_proyectil)
                 distancia.append(d)
-                entities.add(d)
-                entities.add(d.proyectil)
+                entities_dinamicos.add(d)
+                entities_dinamicos.add(d.proyectil)
             if col =="m":
                 m = Melee(x,y,ruta_melee,speed_melee)
                 melee.append(m)
-                entities.add(m)
+                entities_dinamicos.add(m)
             if col == "o":
                 o = Platform(x,y, ruta_platform_muerte)
                 oils.append(o)
-                entities.add(o)
+                entities_fijos.add(o)
             if col == "s":
                 player = PJ((x,y),sprites, x, y,lives)
                 xini=x
@@ -761,7 +763,7 @@ def Juego(resolution,sprites,nivel,lives):
             if col== "h":
                 love= vidas(x,y,resolution)
                 he.append(love)
-                entities.add(love)
+                entities_dinamicos.add(love)
 
                 
             x += 18
@@ -771,7 +773,7 @@ def Juego(resolution,sprites,nivel,lives):
     total_level_width  = len(level[0])*35
     total_level_height = len(level)*35
     camera = Camera(complex_camera, (total_level_width, total_level_height))
-    entities.add(player)
+    entities_dinamicos.add(player)
     
     total_dialogos = dialogos.readline()
     lardialogo=0
@@ -804,13 +806,15 @@ def Juego(resolution,sprites,nivel,lives):
         score-=1    
         player.muerte_etapa(oils, wat)        
         
-        player.handle_event(key,platforms)
+        player.handle_event(key,platforms,joystick)
         camera.update(player,resolution)
         background=pygame.image.load(fondo).convert()
         screen.blit(background,(0,0))
         screen.blit(fondo1.image,(fondo1.rect.left,fondo1.rect.top))
-
-        for e in entities:
+        for e in entities_fijos:
+            screen.blit(e.image, camera.apply(e))
+        entities_fijos_mostrados = True
+        for e in entities_dinamicos:
             screen.blit(e.image, camera.apply(e))
         if vivo==False:
             lives-=1
@@ -852,7 +856,7 @@ def Juego(resolution,sprites,nivel,lives):
             pygame.display.flip()
             while(pasar == False):
                 for event in pygame.event.get():    
-                    if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN) or joystick.get_button(0):
                         lardialogo+=1
                         pasar = True
                         if(lardialogo == int(total_dialogos[0])):
