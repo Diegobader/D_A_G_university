@@ -95,7 +95,6 @@ class PJ(Entity,pygame.sprite.Sprite):
         vivo=True
         global lives
         lives=lives_
-        self.tiempo_entre_attack = 0
         self.clock = pygame.time.Clock()
         self.woman=False
         self.stick=False
@@ -283,9 +282,8 @@ class PJ(Entity,pygame.sprite.Sprite):
     def update(self,up,right,left,attack,platforms):
 ################################################################################
 ############################attack sin mas botones##############################
-        if attack and self.attacking == False:
+        if attack:
             self.attacking = True
-        if self.attacking:
             if self.facer:
                 self.clip(self.attackright_states)
             if self.facel:
@@ -311,10 +309,10 @@ class PJ(Entity,pygame.sprite.Sprite):
         if right and self.onGround:
             self.facer=True
             self.facel=False
-            if not self.attacking:
+            if not attack:
                 self.clip(self.right_states)
             self.xvel= 8
-            if self.attacking:
+            if attack:
                 if self.onGround:
                     self.clip(self.attackright_states)
                 if up:
@@ -322,10 +320,10 @@ class PJ(Entity,pygame.sprite.Sprite):
         if left and self.onGround:
             self.facer=False
             self.facel=True
-            if not self.attacking:
+            if not attack:
                 self.clip(self.left_states)
             self.xvel= -8
-            if self.attacking:
+            if attack:
                 if self.onGround:
                     self.clip(self.attackleft_states)
                 if up:
@@ -335,7 +333,7 @@ class PJ(Entity,pygame.sprite.Sprite):
 ################################################################################
         if not self.onGround:
             self.yvel+=5
-            if self.woman and not self.attacking:
+            if self.woman and not attack:
                 if self.facer:
                     if self.yvel<-4:
                         self.clip(self.upright_states[0])
@@ -384,7 +382,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     if self.yvel>30:
                         self.clip(self.upleft_states[10])
                         self.yvel=30
-            if self.stick and not self.attacking:
+            if self.stick and not attack:
                 if self.facer:
                     if self.yvel<-4:
                         self.clip(self.upright_states[0])
@@ -407,7 +405,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.clip(self.upleft_states[3])
                     if self.yvel>30:
                         self.yvel=30
-            if self.man and not self.attacking:
+            if self.man and not attack:
                 if self.facer:
                     if self.yvel<-15:
                         self.clip(self.upright_states[0])
@@ -528,19 +526,19 @@ class PJ(Entity,pygame.sprite.Sprite):
 #########################################################################
         if not (right or left):
             self.xvel=0
-        if self.onGround and self.xvel==0 and not self.attacking:
+        if self.onGround and self.xvel==0 and not attack:
             if self.facer:
                 self.clip(self.right_states[0])
             elif self.facel:
                 self.clip(self.left_states[0])
 
         self.rect.x+=self.xvel
-        self.collide(self.xvel,0,platforms,self.attacking)
+        self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
         self.onGround=False
         self.atupright=False
         self.atupleft=False
-        self.collide(0, self.yvel , platforms,self.attacking)
+        self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         if vivo==False:
             self.rect.x= self.xinicial
@@ -568,24 +566,24 @@ class PJ(Entity,pygame.sprite.Sprite):
     def collide(self, xvel, yvel, platforms,attack):      
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
-                if isinstance(p, Platform) and not self.attacking:
+                if isinstance(p, Platform) and not attack:
                     if self.facer:
                         self.clip(self.right_states[0])
                     elif self.facel:
                         self.clip(self.left_states[0])
                     self.choque=True
-                elif isinstance(p, Platform) and self.attacking:
+                elif isinstance(p, Platform) and attack:
                     if self.facer:
                         self.clip(self.attackright_states[0])
                     elif self.facel:
                         self.clip(self.attackleft_states[0])
                     self.choque=True
-                if isinstance(p, Water) and not self.attacking:
+                if isinstance(p, Water) and not attack:
                     if self.facer:
                         self.clip(self.right_states[0])
                     elif self.facel:
                         self.clip(self.left_states[0])
-                elif isinstance(p, Water) and self.attacking:
+                elif isinstance(p, Water) and attack:
                     if self.facer:
                         self.clip(self.attackright_states[0])
                     elif self.facel:
@@ -605,12 +603,6 @@ class PJ(Entity,pygame.sprite.Sprite):
     def handle_event(self,key,platforms,joystick):
         right=up=left=attack=False
         pygame.event.set_blocked(pygame.MOUSEMOTION)
-        if self.attacking or self.tiempo_entre_attack > 0:
-            self.tiempo_entre_attack += self.clock.tick()
-        if self.tiempo_entre_attack >= 2000:
-            self.attacking = False
-        if self.tiempo_entre_attack >= 3000:
-            self.tiempo_entre_attack = 0
 
         if key[pygame.K_RIGHT] or joystick.get_axis(0) >= 0.5:
             right=True
