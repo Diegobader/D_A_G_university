@@ -8,7 +8,7 @@ class GameMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se d
         self.scr_height = self.screen.get_rect().height
         self.clock = pygame.time.Clock()
         
-    def run(self, joystick):
+    def run(self):
         pygame.mixer.init()
         pygame.mixer.music.load("Music/Menu.mp3")
         pygame.mixer.music.play(-1)
@@ -20,7 +20,7 @@ class GameMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se d
             for event in pygame.event.get():                   #QUe ocurre con las teclas
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN) or joystick.get_button(0):
+                if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
                     self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/lockers.png').convert_alpha(), self.resolution),(0,0))
                     self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/smashing.png').convert_alpha(), (3*(self.resolution[0]/4),self.resolution[1]/2)),(self.resolution[0]/2-3*(self.resolution[0]/8),self.resolution[1]/4))
                     self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/dag.png').convert_alpha(), (self.resolution[0]/2,self.resolution[1]/5)),(self.resolution[0]/2-self.resolution[0]/4,self.resolution[1]/2-self.resolution[1]/10))
@@ -54,7 +54,7 @@ class CharMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se d
             t_h = len(items) * height
             posy = (self.scr_height / 2) - (t_h / 2) + (index * height)
             self.items.append([item, label, (width, height), (posx, posy)])
-    def run(self, joystick):
+    def run(self):
         pygame.mixer.init()
         pygame.mixer.music.load("Music/Menu.mp3")
         pygame.mixer.music.play(-1)
@@ -80,12 +80,12 @@ class CharMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se d
             for event in pygame.event.get():                   #QUe ocurre con las teclas
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                if (event.type == pygame.KEYDOWN and event.key == pygame.K_UP) or joystick.get_axis(1) <= -0.5:
+                if (event.type == pygame.KEYDOWN and event.key == pygame.K_UP):
                     if choosi==1:
                         choosi=len(self.items)
                     else:
                         choosi-=1
-                elif (event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN) or joystick.get_axis(1) >= 0.5:
+                elif (event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN):
                     if choosi==len(self.items):
                         choosi=1
                     else:
@@ -94,7 +94,7 @@ class CharMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se d
                     pass
                 if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                     pass
-                if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN) or joystick.get_button(0):
+                if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
                     return choosi  #Retorna el valor de la opcion elegida
             for man in range(len(self.items)):       #Genera la lista y colorea la opcion que esta siendo seleccionada
                 self.items[man][1]=self.font.render(str(self.items[man][0]), 1, (50,0,0))

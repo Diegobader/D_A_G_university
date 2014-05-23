@@ -602,7 +602,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     self.rect.top = p.rect.bottom
                     self.yvel = 0        
         
-    def handle_event(self,key,platforms,joystick):
+    def handle_event(self,key,platforms):
         right=up=left=attack=False
         pygame.event.set_blocked(pygame.MOUSEMOTION)
         if self.attacking or self.tiempo_entre_attack > 0:
@@ -612,13 +612,13 @@ class PJ(Entity,pygame.sprite.Sprite):
         if self.tiempo_entre_attack >= 3000:
             self.tiempo_entre_attack = 0
 
-        if key[pygame.K_RIGHT] or joystick.get_axis(0) >= 0.5:
+        if key[pygame.K_RIGHT]:
             right=True
-        if key[pygame.K_UP]  or joystick.get_button(0) or joystick.get_axis(1) <= -0.5:
+        if key[pygame.K_UP]:
             up=True
-        if key[pygame.K_LEFT] or joystick.get_axis(0) <= -0.5:
+        if key[pygame.K_LEFT]:
             left=True
-        if (key[pygame.K_k] or joystick.get_button(1)) and self.tiempo_entre_attack == 0:
+        if key[pygame.K_k]:
             attack=True
 
         self.update(up,right,left,attack,platforms)
@@ -660,7 +660,7 @@ class vidas(pygame.sprite.Sprite):
         
 ################################################################################
 score=2000
-def Juego(resolution,sprites,nivel,lives, joystick):
+def Juego(resolution,sprites,nivel,lives):
     global score
     global vivo
 
@@ -806,7 +806,7 @@ def Juego(resolution,sprites,nivel,lives, joystick):
         score-=1    
         player.muerte_etapa(oils, wat)        
         
-        player.handle_event(key,platforms,joystick)
+        player.handle_event(key,platforms)
         camera.update(player,resolution)
         background=pygame.image.load(fondo).convert()
         screen.blit(background,(0,0))
@@ -856,7 +856,7 @@ def Juego(resolution,sprites,nivel,lives, joystick):
             pygame.display.flip()
             while(pasar == False):
                 for event in pygame.event.get():    
-                    if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN) or joystick.get_button(0):
+                    if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
                         lardialogo+=1
                         pasar = True
                         if(lardialogo == int(total_dialogos[0])):

@@ -23,7 +23,7 @@ def Character(level,stage,personaje):   #Elige Personaje y vestimenta de acuerdo
         return 'Images/Woman/'+str(level)+'_'+str(stage)+'.png'
     elif personaje==2:
         return 'Images/Man/'+str(level)+'_'+str(stage)+'.png'
-def menu(resolution, joystick):    #Despliega menu que solo retorna valores de personje (depende de cuantos sean) y muestra creditos y cierra juego
+def menu(resolution):    #Despliega menu que solo retorna valores de personje (depende de cuantos sean) y muestra creditos y cierra juego
     pygame.mixer.init()
     pygame.mixer.music.load("Music/Menu.mp3")
     pygame.mixer.music.play(-1)
@@ -31,8 +31,8 @@ def menu(resolution, joystick):    #Despliega menu que solo retorna valores de p
     menu_items_2 = ('Woman','Man','Stick','Quit')
     pygame.display.set_caption('D_A_G')
     while True:
-        Menu.GameMenu(screen,resolution, ((resolution[0])/10)).run(joystick)
-        gm2 = Menu.CharMenu(screen, menu_items_2,resolution, ((resolution[0])/10)).run(joystick)
+        Menu.GameMenu(screen,resolution, ((resolution[0])/10)).run()
+        gm2 = Menu.CharMenu(screen, menu_items_2,resolution, ((resolution[0])/10)).run()
         if gm2<len(menu_items_2):
             break
         elif gm2==len(menu_items_2):
@@ -42,16 +42,14 @@ def menu(resolution, joystick):    #Despliega menu que solo retorna valores de p
 def game(resolution): #Hace correr los codigos
     pygame.init()
 
-    joystick = pygame.joystick.Joystick(0)
-    joystick.init()
-    character=menu(resolution, joystick)  #Para seleccionar personaje
+    character=menu(resolution)  #Para seleccionar personaje
     Character(1,1,character)   #para seleccionar vestimenta de personaje
     jugar = True
 
     lives = [4]
     nivel = 1
     while(jugar):
-        if Etapa.Juego(resolution,Character(1,1,character),nivel, lives[0], joystick)==True:
+        if Etapa.Juego(resolution,Character(1,1,character),nivel, lives[0])==True:
             pygame.time.delay(2000)
             nivel += 1
         else:
