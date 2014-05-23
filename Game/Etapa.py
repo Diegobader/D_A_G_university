@@ -94,9 +94,8 @@ class PJ(Entity,pygame.sprite.Sprite):
         global lives
         lives=lives_
         contat=1500
-        kup=True
         global kup
-        global contat
+        kup=0
         self.woman=False
         self.stick=False
         self.man=False
@@ -618,13 +617,20 @@ class PJ(Entity,pygame.sprite.Sprite):
         if key[pygame.K_LEFT]:
             left=True
         if key[pygame.K_k]:
-            kup=6
-            if kup>5:
+            if kup==0:
+                kup=5
+            if kup==1:
+                kup=-1
+            if kup<0:
                 attack=False
-        if kup>0 and not key[pygame.K_k]:
-            kup=kup-1
         if kup<=5 and kup>0:
             attack=True
+        if kup==-1:
+            attack=False
+        if kup>0:
+            kup=kup-1
+        if kup==-1 and key[pygame.K_k]==0:
+            kup=0
         self.update(up,right,left,attack,platforms)
 
 #############################################################################
