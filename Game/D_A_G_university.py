@@ -8,10 +8,7 @@ class Start:
     def __init__(self):
         pass
     def Go(self,ArcadeServiceInterface):
-        try:
-            return 0
-        except Exception:
-            return -1
+        main()
 ###############################################
 
 
