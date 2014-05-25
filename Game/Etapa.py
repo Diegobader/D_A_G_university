@@ -93,14 +93,9 @@ class PJ(Entity,pygame.sprite.Sprite):
         vivo=True
         global lives
         lives=lives_
-<<<<<<< HEAD
         contat=1500
         global kup
         kup=0
-=======
-        self.tiempo_entre_attack = 0
-        self.clock = pygame.time.Clock()
->>>>>>> master
         self.woman=False
         self.stick=False
         self.man=False
@@ -291,14 +286,13 @@ class PJ(Entity,pygame.sprite.Sprite):
     def update(self,up,right,left,attack,platforms):
 ################################################################################
 ############################attack sin mas botones##############################
-        if attack and self.attacking == False:
-            self.attacking = True
-        if self.attacking:
+        if attack:
             if self.facer:
                 self.clip(self.attackright_states)
             self.attacking = True
             if self.facel:
                 self.clip(self.attackleft_states)
+            self.attacking = True
             if not self.onGround:
                 if left or self.facel:
                     self.atupleft=True
@@ -318,28 +312,13 @@ class PJ(Entity,pygame.sprite.Sprite):
 
 ################################################################################
 ############################## right/left on ground##############################                
-<<<<<<< HEAD
         if left :
-=======
-        if right and self.onGround:
-            self.facer=True
-            self.facel=False
-            if not self.attacking:
-                self.clip(self.right_states)
-            self.xvel= 8
-            if self.attacking:
-                if self.onGround:
-                    self.clip(self.attackright_states)
-                if up:
-                    self.atupright=True
-        if left and self.onGround:
->>>>>>> master
             self.facer=False
             self.facel=True
-            if not self.attacking:
+            if not attack:
                 self.clip(self.left_states)
             self.xvel= -8
-            if self.attacking:
+            if attack:
                 if self.onGround:
                     self.clip(self.attackleft_states)
                 if up:
@@ -361,7 +340,7 @@ class PJ(Entity,pygame.sprite.Sprite):
 ################################################################################
         if not self.onGround:
             self.yvel+=5
-            if self.woman and not self.attacking:
+            if self.woman and not attack:
                 if self.facer:
                     if self.yvel<-4:
                         self.clip(self.upright_states[0])
@@ -410,7 +389,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     if self.yvel>30:
                         self.clip(self.upleft_states[10])
                         self.yvel=30
-            if self.stick and not self.attacking:
+            if self.stick and not attack:
                 if self.facer:
                     if self.yvel<-4:
                         self.clip(self.upright_states[0])
@@ -433,7 +412,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.clip(self.upleft_states[3])
                     if self.yvel>30:
                         self.yvel=30
-            if self.man and not self.attacking:
+            if self.man and not attack:
                 if self.facer:
                     if self.yvel<-15:
                         self.clip(self.upright_states[0])
@@ -554,19 +533,19 @@ class PJ(Entity,pygame.sprite.Sprite):
 #########################################################################
         if not (right or left):
             self.xvel=0
-        if self.onGround and self.xvel==0 and not self.attacking:
+        if self.onGround and self.xvel==0 and not attack:
             if self.facer:
                 self.clip(self.right_states[0])
             elif self.facel:
                 self.clip(self.left_states[0])
 
         self.rect.x+=self.xvel
-        self.collide(self.xvel,0,platforms,self.attacking)
+        self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
         self.onGround=False
         self.atupright=False
         self.atupleft=False
-        self.collide(0, self.yvel , platforms,self.attacking)
+        self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         if vivo==False:
             self.rect.x= self.xinicial
@@ -594,32 +573,22 @@ class PJ(Entity,pygame.sprite.Sprite):
     def collide(self, xvel, yvel, platforms,attack):      
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
-                if isinstance(p, Platform) and not self.attacking:
+                if isinstance(p, Platform) and not attack:
                     if self.facer:
                         self.clip(self.right_states[0])
                     elif self.facel:
                         self.clip(self.left_states[0])
-<<<<<<< HEAD
                 elif isinstance(p, Platform) and attack:
-=======
-                    self.choque=True
-                elif isinstance(p, Platform) and self.attacking:
->>>>>>> master
                     if self.facer:
                         self.clip(self.attackright_states[0])
                     elif self.facel:
                         self.clip(self.attackleft_states[0])
-<<<<<<< HEAD
                 if isinstance(p, Water) and not attack:
-=======
-                    self.choque=True
-                if isinstance(p, Water) and not self.attacking:
->>>>>>> master
                     if self.facer:
                         self.clip(self.right_states[0])
                     elif self.facel:
                         self.clip(self.left_states[0])
-                elif isinstance(p, Water) and self.attacking:
+                elif isinstance(p, Water) and attack:
                     if self.facer:
                         self.clip(self.attackright_states[0])
                     elif self.facel:
@@ -641,16 +610,6 @@ class PJ(Entity,pygame.sprite.Sprite):
         global kup
         right=up=left=attack=False
         pygame.event.set_blocked(pygame.MOUSEMOTION)
-<<<<<<< HEAD
-=======
-        if self.attacking or self.tiempo_entre_attack > 0:
-            self.tiempo_entre_attack += self.clock.tick()
-        if self.tiempo_entre_attack >= 2000:
-            self.attacking = False
-        if self.tiempo_entre_attack >= 3000:
-            self.tiempo_entre_attack = 0
-
->>>>>>> master
         if key[pygame.K_RIGHT]:
             right=True
         if key[pygame.K_UP]:
@@ -743,7 +702,6 @@ def Juego(resolution,sprites,nivel,lives,score):
     etapa = file("Maps/lvl" + str(nivel) + "/mapa.txt")
     enemigos = file("Maps/lvl" + str(nivel) + "/enemigos.txt")
     musica = file("Maps/lvl" + str(nivel) + "/musica.txt")
-
     #Rutas sprites de etapa
 
     fondo = sprites_etapa.readline()
@@ -809,32 +767,26 @@ def Juego(resolution,sprites,nivel,lives,score):
     oils = []
     wat=[]
     he=[]
-<<<<<<< HEAD
     entities=pygame.sprite.Group()
-=======
-    
-    entities_fijos = pygame.sprite.Group()
-    entities_dinamicos = pygame.sprite.Group()
->>>>>>> master
     for row in level:
         for col in row:
             if col =="p":
                 p = Platform(x,y, ruta_platform)
                 platforms.append(p)
-                entities_fijos.add(p)
+                entities.add(p)
             if col =="d":
                 d = Distancia(x,y,ruta_distancia, speed_distancia, ruta_proyectil, speed_proyectil)
                 distancia.append(d)
-                entities_dinamicos.add(d)
-                entities_dinamicos.add(d.proyectil)
+                entities.add(d)
+                entities.add(d.proyectil)
             if col =="m":
                 m = Melee(x,y,ruta_melee,speed_melee)
                 melee.append(m)
-                entities_dinamicos.add(m)
+                entities.add(m)
             if col == "o":
                 o = Platform(x,y, ruta_platform_muerte)
                 oils.append(o)
-                entities_fijos.add(o)
+                entities.add(o)
             if col == "s":
                 player = PJ((x,y),sprites, x, y,lives)
                 xini=x
@@ -842,7 +794,7 @@ def Juego(resolution,sprites,nivel,lives,score):
             if col== "h":
                 love= vidas(x,y,resolution)
                 he.append(love)
-                entities_dinamicos.add(love)
+                entities.add(love)
 
                 
             x += 18
@@ -852,7 +804,7 @@ def Juego(resolution,sprites,nivel,lives,score):
     total_level_width  = len(level[0])*35
     total_level_height = len(level)*35
     camera = Camera(complex_camera, (total_level_width, total_level_height))
-    entities_dinamicos.add(player)
+    entities.add(player)
     
     total_dialogos = dialogos.readline()
     lardialogo=0
@@ -884,6 +836,7 @@ def Juego(resolution,sprites,nivel,lives,score):
                 lives+=1
                 score+=100
         score-=1    
+        player.attacking = False
         player.muerte_etapa(oils, wat)        
         
         player.handle_event(key,platforms)
@@ -891,10 +844,8 @@ def Juego(resolution,sprites,nivel,lives,score):
         background=pygame.image.load(fondo).convert()
         screen.blit(background,(0,0))
         screen.blit(fondo1.image,(fondo1.rect.left,fondo1.rect.top))
-        for e in entities_fijos:
-            screen.blit(e.image, camera.apply(e))
-        entities_fijos_mostrados = True
-        for e in entities_dinamicos:
+
+        for e in entities:
             screen.blit(e.image, camera.apply(e))
         if vivo==False:
             lives-=1
@@ -946,7 +897,7 @@ def Juego(resolution,sprites,nivel,lives,score):
             pygame.display.flip()
             while(pasar == False):
                 for event in pygame.event.get():    
-                    if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
+                    if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                         lardialogo+=1
                         pasar = True
                         if(lardialogo == int(total_dialogos[0])):

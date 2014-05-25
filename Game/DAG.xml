@@ -5,22 +5,14 @@
 	<Version>100</Version>
 	<Date>11-01-2014</Date>
 	<Description>Solo un dia normal de un estudiante de ingenieria UC</Description>
-<<<<<<< HEAD
 	<MainClass name="Start" file="./games/DAG/D_A_G_university.py"/>
-=======
-	<MainClass name="Start" file="./games/Game/D_A_G_university.py"/>
->>>>>>> master
 	<Authors>
 		<Author name="Diego Alvarez"/>
 		<Author name="Amanda Cespedes"/>
 		<Author name="Gabriel Yuseff"/>
 	</Authors>
 	<Screenshots>
-<<<<<<< HEAD
 		<Screenshot src="./games/DAG/Images/Others/menu_chafa.png"/>
-=======
-		<Screenshot src="./games/Game/Images/Others/menu_chafa.png"/>
->>>>>>> master
 	</Screenshots>
 	<Services>
 	</Services>
