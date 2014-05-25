@@ -696,6 +696,7 @@ def leaderboard(score):
 def Juego(resolution,sprites,nivel,lives,score):
     global vivo
     global kup
+    global attack
 
     dialogos = file("Maps/lvl" + str(nivel) + "/dialogos.txt")
     sprites_etapa = file("Maps/lvl" +str(nivel) + "/sprites_etapa.txt")
@@ -788,7 +789,7 @@ def Juego(resolution,sprites,nivel,lives,score):
                 oils.append(o)
                 entities.add(o)
             if col == "s":
-                player = PJ((x,y),sprites, x, y,lives)
+                player = PJ((x,y),sprites, x+5, y-20,lives)
                 xini=x
                 yini=y
             if col== "h":
@@ -851,6 +852,7 @@ def Juego(resolution,sprites,nivel,lives,score):
             lives-=1
             score-=200
             vivo=True
+            attack=False
         if (len(distancia) == 0 and len(melee) == 0):
             screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
             screen.blit(clear,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/14))
@@ -897,7 +899,7 @@ def Juego(resolution,sprites,nivel,lives,score):
             pygame.display.flip()
             while(pasar == False):
                 for event in pygame.event.get():    
-                    if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
                         lardialogo+=1
                         pasar = True
                         if(lardialogo == int(total_dialogos[0])):

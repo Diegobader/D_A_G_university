@@ -20,7 +20,7 @@ class GameMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se d
             for event in pygame.event.get():                   #QUe ocurre con las teclas
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
                     self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/lockers.png').convert_alpha(), self.resolution),(0,0))
                     self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/smashing.png').convert_alpha(), (3*(self.resolution[0]/4),self.resolution[1]/2)),(self.resolution[0]/2-3*(self.resolution[0]/8),self.resolution[1]/4))
                     self.screen.blit(pygame.transform.scale(pygame.image.load('Images/Others/dag.png').convert_alpha(), (self.resolution[0]/2,self.resolution[1]/5)),(self.resolution[0]/2-self.resolution[0]/4,self.resolution[1]/2-self.resolution[1]/10))
@@ -30,7 +30,7 @@ class GameMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se d
                     pygame.display.flip()
                     pygame.time.delay(1000)
                     return True
-                if event.type == pygame.KEYUP and event.key == pygame.K_RETURN:
+                if event.type == pygame.KEYUP and event.key == pygame.K_a:
                     pass
             pygame.display.flip()
 
@@ -94,7 +94,7 @@ class CharMenu():  #para un menu de TODAS LAS OPCIONES que se quieran, solo se d
                     pass
                 if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                     pass
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
                     return choosi  #Retorna el valor de la opcion elegida
             for man in range(len(self.items)):       #Genera la lista y colorea la opcion que esta siendo seleccionada
                 self.items[man][1]=self.font.render(str(self.items[man][0]), 1, (50,0,0))
