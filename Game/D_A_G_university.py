@@ -48,7 +48,7 @@ def game(resolution): #Hace correr los codigos
         character=menu(resolution)  #Para seleccionar personaje
         Character(1,1,character)   #para seleccionar vestimenta de personaje
         lista=[True,4,2000]  #[estado de juego, vidas, score]
-        nivel=2
+        nivel=1
         while(lista[0]):
             lista= Etapa.Juego(resolution,Character(1,1,character),nivel, lista[1],lista[2])
             if lista[0]==True:
