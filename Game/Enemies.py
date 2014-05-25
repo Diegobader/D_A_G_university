@@ -13,14 +13,14 @@ class Melee(pygame.sprite.Sprite):
         self.speed = speed
         self.vivo = True
     
-    def update(self, pj, time,key ,*colisionables):
+    def update(self, pj, time,key ,kup,*colisionables):
         if self.vivo:
             for c in colisionables:
                 if pygame.sprite.spritecollideany(self, c):
                     self.speed *= -1
                     self.rect.centerx += self.speed
                 self.rect.centerx += self.speed
-                if pygame.sprite.collide_rect(pj, self) and key[pygame.K_k]:
+                if pygame.sprite.collide_rect(pj, self) and key[pygame.K_k] and kup<5 and kup>0:
                     self.muerte()
     def muerte(self):
             self.vivo = False
@@ -66,7 +66,7 @@ class Distancia(pygame.sprite.Sprite):
         self.speed = speed
         self.proyectil = Proyectil(self, 10,ruta_proyectil)
                 
-    def update(self, pj, time,key, resolution, *colisionables):
+    def update(self, pj, time,key,kup, resolution, *colisionables):
         """Movimiento de Personaje y colisiones"""
         if self.vivo:
             r = randint(0,2)
@@ -80,7 +80,7 @@ class Distancia(pygame.sprite.Sprite):
                     self.speed *= -1
                     self.rect.centery += self.speed
                     
-            if pygame.sprite.collide_rect(pj, self) and key[pygame.K_k]:
+            if pygame.sprite.collide_rect(pj, self) and key[pygame.K_k] and kup<5 and kup>0:
                 self.muerte()
                     
             self.proyectil.update(pj, time, self, vx, vy, resolution, *colisionables) 

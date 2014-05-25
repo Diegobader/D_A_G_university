@@ -1,4 +1,4 @@
-Images/Others/fondo1.png
+Images/Others/fondo2.jpg
 Images/Others/bed.png
 Images/Others/v.png
 Images/Others/oil.png

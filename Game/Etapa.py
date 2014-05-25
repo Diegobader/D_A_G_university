@@ -85,8 +85,6 @@ class PJ(Entity,pygame.sprite.Sprite):
         self.sheet = pygame.image.load(sprites)
         self.sheet.set_clip(pygame.Rect(6, 52, 30, 50))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
-        self.rect = self.image.get_rect()
-        self.rect.topleft = position
         self.xvel=0
         self.yvel=0
         self.xinicial = x_i
@@ -95,8 +93,9 @@ class PJ(Entity,pygame.sprite.Sprite):
         vivo=True
         global lives
         lives=lives_
-        self.tiempo_entre_attack = 0
-        self.clock = pygame.time.Clock()
+        contat=1500
+        global kup
+        kup=0
         self.woman=False
         self.stick=False
         self.man=False
@@ -114,6 +113,10 @@ class PJ(Entity,pygame.sprite.Sprite):
             self.stick=True
         elif sprites=='Images/Man/1_1.png':
             self.man=True
+            self.sheet.set_clip(pygame.Rect(6, 52, 30, 40))
+        self.image = self.sheet.subsurface(self.sheet.get_clip())
+        self.rect = self.image.get_rect()
+        self.rect.bottomright = position
 ################################### stick ######################################
         if self.stick:
             self.right_states={0: (6, 52, 30, 50),
@@ -283,59 +286,61 @@ class PJ(Entity,pygame.sprite.Sprite):
     def update(self,up,right,left,attack,platforms):
 ################################################################################
 ############################attack sin mas botones##############################
-        if attack and self.attacking == False:
-            self.attacking = True
-        if self.attacking:
+        if attack:
             if self.facer:
                 self.clip(self.attackright_states)
+            self.attacking = True
             if self.facel:
                 self.clip(self.attackleft_states)
+            self.attacking = True
             if not self.onGround:
-                if right or self.facer:
-                    self.atupright=True
                 if left or self.facel:
                     self.atupleft=True
-################################################################################
-########################### gravedad inicio salto#############################
+                elif right or self.facer:
+                    self.atupright=True
 
+################################################################################
+########################### gravedad inicio salto##############################
         if up:
             if self.onGround:
                 self.yvel=-30
             if attack and not self.onGround:
-                if right or self.facer:
-                    self.atupright=True
                 if left or self.facel:
                     self.atupleft=True
+                if right or self.facer:
+                    self.atupright=True
+
 ################################################################################
 ############################## right/left on ground##############################                
-        if right and self.onGround:
-            self.facer=True
-            self.facel=False
-            if not self.attacking:
-                self.clip(self.right_states)
-            self.xvel= 8
-            if self.attacking:
-                if self.onGround:
-                    self.clip(self.attackright_states)
-                if up:
-                    self.atupright=True
-        if left and self.onGround:
+        if left :
             self.facer=False
             self.facel=True
-            if not self.attacking:
+            if not attack:
                 self.clip(self.left_states)
             self.xvel= -8
-            if self.attacking:
+            if attack:
                 if self.onGround:
                     self.clip(self.attackleft_states)
                 if up:
                     self.atupleft=True
+        if right :
+            self.facel=False
+            self.facer=True
+            if not attack:
+                self.clip(self.right_states)
+            self.xvel= 8
+            if attack:
+                if self.onGround:
+                    self.clip(self.attackright_states)
+                if up:
+                    self.atupright=True
+
                     
 ################################################################################
 ################################################################################
         if not self.onGround:
             self.yvel+=5
-            if self.woman and not self.attacking:
+            if self.woman and not attack:
                 if self.facer:
                     if self.yvel<-4:
                         self.clip(self.upright_states[0])
@@ -384,7 +389,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     if self.yvel>30:
                         self.clip(self.upleft_states[10])
                         self.yvel=30
-            if self.stick and not self.attacking:
+            if self.stick and not attack:
                 if self.facer:
                     if self.yvel<-4:
                         self.clip(self.upright_states[0])
@@ -407,7 +412,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.clip(self.upleft_states[3])
                     if self.yvel>30:
                         self.yvel=30
-            if self.man and not self.attacking:
+            if self.man and not attack:
                 if self.facer:
                     if self.yvel<-15:
                         self.clip(self.upright_states[0])
@@ -508,7 +513,7 @@ class PJ(Entity,pygame.sprite.Sprite):
                     self.clip(self.atupright_states[6])
                 elif self.yvel<30:
                     self.clip(self.atupright_states[7])
-            if self.atupleft:
+            elif self.atupleft:
                 if self.yvel<-20:
                     self.clip(self.atupleft_states[0])
                 elif self.yvel<-10:
@@ -528,19 +533,19 @@ class PJ(Entity,pygame.sprite.Sprite):
 #########################################################################
         if not (right or left):
             self.xvel=0
-        if self.onGround and self.xvel==0 and not self.attacking:
+        if self.onGround and self.xvel==0 and not attack:
             if self.facer:
                 self.clip(self.right_states[0])
             elif self.facel:
                 self.clip(self.left_states[0])
 
         self.rect.x+=self.xvel
-        self.collide(self.xvel,0,platforms,self.attacking)
+        self.collide(self.xvel,0,platforms,attack)
         self.rect.y+=self.yvel
         self.onGround=False
         self.atupright=False
         self.atupleft=False
-        self.collide(0, self.yvel , platforms,self.attacking)
+        self.collide(0, self.yvel , platforms,attack)
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         if vivo==False:
             self.rect.x= self.xinicial
@@ -568,24 +573,22 @@ class PJ(Entity,pygame.sprite.Sprite):
     def collide(self, xvel, yvel, platforms,attack):      
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
-                if isinstance(p, Platform) and not self.attacking:
+                if isinstance(p, Platform) and not attack:
                     if self.facer:
                         self.clip(self.right_states[0])
                     elif self.facel:
                         self.clip(self.left_states[0])
-                    self.choque=True
-                elif isinstance(p, Platform) and self.attacking:
+                elif isinstance(p, Platform) and attack:
                     if self.facer:
                         self.clip(self.attackright_states[0])
                     elif self.facel:
                         self.clip(self.attackleft_states[0])
-                    self.choque=True
-                if isinstance(p, Water) and not self.attacking:
+                if isinstance(p, Water) and not attack:
                     if self.facer:
                         self.clip(self.right_states[0])
                     elif self.facel:
                         self.clip(self.left_states[0])
-                elif isinstance(p, Water) and self.attacking:
+                elif isinstance(p, Water) and attack:
                     if self.facer:
                         self.clip(self.attackright_states[0])
                     elif self.facel:
@@ -596,22 +599,17 @@ class PJ(Entity,pygame.sprite.Sprite):
                         self.rect.left = p.rect.right
                 if yvel > 0:
                     self.rect.bottom = p.rect.top
-                    self.onGround=True
                     self.yvel = 0
+                    self.onGround=True
                 if yvel < 0:
                     self.rect.top = p.rect.bottom
                     self.yvel = 0        
         
     def handle_event(self,key,platforms):
+        global contat
+        global kup
         right=up=left=attack=False
         pygame.event.set_blocked(pygame.MOUSEMOTION)
-        if self.attacking or self.tiempo_entre_attack > 0:
-            self.tiempo_entre_attack += self.clock.tick()
-        if self.tiempo_entre_attack >= 2000:
-            self.attacking = False
-        if self.tiempo_entre_attack >= 3000:
-            self.tiempo_entre_attack = 0
-
         if key[pygame.K_RIGHT]:
             right=True
         if key[pygame.K_UP]:
@@ -619,8 +617,20 @@ class PJ(Entity,pygame.sprite.Sprite):
         if key[pygame.K_LEFT]:
             left=True
         if key[pygame.K_k]:
+            if kup==0:
+                kup=5
+            if kup==1:
+                kup=-1
+            if kup<0:
+                attack=False
+        if kup<=5 and kup>0:
             attack=True
-
+        if kup==-1:
+            attack=False
+        if kup>0:
+            kup=kup-1
+        if kup==-1 and key[pygame.K_k]==0:
+            kup=0
         self.update(up,right,left,attack,platforms)
 
 #############################################################################
@@ -659,17 +669,39 @@ class vidas(pygame.sprite.Sprite):
             self.exist=False
         
 ################################################################################
-score=2000
-def Juego(resolution,sprites,nivel,lives):
-    global score
+
+def leaderboard(score):
+    rdfile=open("Puntajes.txt","r")
+    actuales=[]
+    for count in range(3):
+        actuales.append(rdfile.readline())
+        actuales[count]=int(actuales[count].replace("\n",""))
+    if score>=actuales[0]:
+        actuales=[score,actuales[0],actuales[1]]
+    elif score>=actuales[1] and score<=actuales[0]:
+        actuales=[actuales[0],score,actuales[1]]
+    elif score>=actuales[2] and score<=actuales[1]:
+        actuales=[actuales[0],actuales[1],score]
+    else:
+        pass
+    wrtfile=open("Puntajes.txt","w")
+    wrtfile.write(str(actuales[0])+"\n")
+    wrtfile.write(str(actuales[1])+"\n")
+    wrtfile.write(str(actuales[2])+"\n")
+    wrtfile.close()
+    return actuales
+
+################################################################################
+
+def Juego(resolution,sprites,nivel,lives,score):
     global vivo
+    global kup
 
     dialogos = file("Maps/lvl" + str(nivel) + "/dialogos.txt")
     sprites_etapa = file("Maps/lvl" +str(nivel) + "/sprites_etapa.txt")
     etapa = file("Maps/lvl" + str(nivel) + "/mapa.txt")
     enemigos = file("Maps/lvl" + str(nivel) + "/enemigos.txt")
     musica = file("Maps/lvl" + str(nivel) + "/musica.txt")
-
     #Rutas sprites de etapa
 
     fondo = sprites_etapa.readline()
@@ -718,6 +750,7 @@ def Juego(resolution,sprites,nivel,lives):
     heart=rezize('Images/Others/heart.png',(resolution[0]*1/25,resolution[1]*1/25))       
     clear=rezize('Images/Others/clear.png',(resolution[0]/2,resolution[1]/7))
     end=rezize('Images/Others/end.png',(resolution[0]/2,resolution[1]/3))
+    black=rezize('Images/Others/black.png',resolution)
     dibox=rezize('Images/Others/dibox.png',(resolution[0],resolution[1]/4))
     white=rezize(ruta_white,(resolution[0],resolution[1]*3/4))
     presstocont=rezize('Images/Others/presstocont1.png',(resolution[0]/10,resolution[1]/9))
@@ -734,28 +767,26 @@ def Juego(resolution,sprites,nivel,lives):
     oils = []
     wat=[]
     he=[]
-    
-    entities_fijos = pygame.sprite.Group()
-    entities_dinamicos = pygame.sprite.Group()
+    entities=pygame.sprite.Group()
     for row in level:
         for col in row:
             if col =="p":
                 p = Platform(x,y, ruta_platform)
                 platforms.append(p)
-                entities_fijos.add(p)
+                entities.add(p)
             if col =="d":
                 d = Distancia(x,y,ruta_distancia, speed_distancia, ruta_proyectil, speed_proyectil)
                 distancia.append(d)
-                entities_dinamicos.add(d)
-                entities_dinamicos.add(d.proyectil)
+                entities.add(d)
+                entities.add(d.proyectil)
             if col =="m":
                 m = Melee(x,y,ruta_melee,speed_melee)
                 melee.append(m)
-                entities_dinamicos.add(m)
+                entities.add(m)
             if col == "o":
                 o = Platform(x,y, ruta_platform_muerte)
                 oils.append(o)
-                entities_fijos.add(o)
+                entities.add(o)
             if col == "s":
                 player = PJ((x,y),sprites, x, y,lives)
                 xini=x
@@ -763,7 +794,7 @@ def Juego(resolution,sprites,nivel,lives):
             if col== "h":
                 love= vidas(x,y,resolution)
                 he.append(love)
-                entities_dinamicos.add(love)
+                entities.add(love)
 
                 
             x += 18
@@ -773,12 +804,11 @@ def Juego(resolution,sprites,nivel,lives):
     total_level_width  = len(level[0])*35
     total_level_height = len(level)*35
     camera = Camera(complex_camera, (total_level_width, total_level_height))
-    entities_dinamicos.add(player)
+    entities.add(player)
     
     total_dialogos = dialogos.readline()
     lardialogo=0
     while True:
-        
         time=clock.tick(30)
         key=pygame.key.get_pressed()
         for eventos in pygame.event.get():
@@ -786,24 +816,27 @@ def Juego(resolution,sprites,nivel,lives):
                 pygame.quit()
                 sys.exit()
         for d in distancia:
-            d.update(player, time, key,resolution, platforms, oils)
+            d.update(player, time, key,kup,resolution, platforms, oils)
             player.muerte_proyectil(d)
             player.muerte_toque(d)
             if d.vivo==False:
                 distancia.remove(d)
                 score+=500
+                return [True,lives,score]
         for m in melee:
-            m.update(player, time, key, platforms, oils)
+            m.update(player, time, key,kup, platforms, oils)
             player.muerte_toque(m)
             if m.vivo==False:
                 melee.remove(m)
-                score+=250       
+                score+=250
         for love in he:
             love.update(player,platforms)
             if love.exist==False:
                 he.remove(love)
-                lives+=1   
+                lives+=1
+                score+=100
         score-=1    
+        player.attacking = False
         player.muerte_etapa(oils, wat)        
         
         player.handle_event(key,platforms)
@@ -811,10 +844,8 @@ def Juego(resolution,sprites,nivel,lives):
         background=pygame.image.load(fondo).convert()
         screen.blit(background,(0,0))
         screen.blit(fondo1.image,(fondo1.rect.left,fondo1.rect.top))
-        for e in entities_fijos:
-            screen.blit(e.image, camera.apply(e))
-        entities_fijos_mostrados = True
-        for e in entities_dinamicos:
+
+        for e in entities:
             screen.blit(e.image, camera.apply(e))
         if vivo==False:
             lives-=1
@@ -825,13 +856,23 @@ def Juego(resolution,sprites,nivel,lives):
             screen.blit(clear,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/14))
             pygame.display.flip()
             pygame.time.delay(2000)
-            return True
+            return [True,lives,score]
         if lives==0:
+            myfont = pygame.font.SysFont("monospace", resolution[1]/12, bold=True)
+            puntajes=leaderboard(score)
             screen.blit(rezize('Images/Others/vacio.png',resolution),(0,0))
             screen.blit(end,(resolution[0]/2-resolution[0]/4,resolution[1]/2-resolution[1]/6))
             pygame.display.flip()
             pygame.time.delay(2000)
-            break
+            screen.blit(black,(0,0))
+            screen.blit(myfont.render("Your Score is: "+str(score),1,(255,255,255)),(resolution[0]/6,resolution[1]/4))
+            screen.blit(myfont.render("The TOP 3 Scores are...",1,(255,255,255)),(resolution[0]/9,resolution[1]/2))
+            screen.blit(myfont.render("1.- "+str(puntajes[0]),1,(255,255,255)),(resolution[0]/5,7*resolution[1]/12))
+            screen.blit(myfont.render("2.- "+str(puntajes[1]),1,(255,255,255)),(resolution[0]/5,8*resolution[1]/12))
+            screen.blit(myfont.render("3.- "+str(puntajes[2]),1,(255,255,255)),(resolution[0]/5,9*resolution[1]/12))
+            pygame.display.flip()
+            pygame.time.delay(10000)
+            return [False,lives,score]
         
         myfont = pygame.font.SysFont("monospace", resolution[1]/20, bold=True)
         label = myfont.render("Score:"+str(score), 1, (0,0,0))
@@ -856,7 +897,7 @@ def Juego(resolution,sprites,nivel,lives):
             pygame.display.flip()
             while(pasar == False):
                 for event in pygame.event.get():    
-                    if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
+                    if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                         lardialogo+=1
                         pasar = True
                         if(lardialogo == int(total_dialogos[0])):
@@ -864,4 +905,4 @@ def Juego(resolution,sprites,nivel,lives):
 
 
         
-    return 0
+    return [True,lives,score]

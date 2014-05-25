@@ -1,2 +1,6 @@
-Images/Others/bb_1.png
-Images/Others/slime.png
+Images/Others/train.png
+5
+Images/Others/bb_p.png
+8
+Images/Others/vagon.png
+3
